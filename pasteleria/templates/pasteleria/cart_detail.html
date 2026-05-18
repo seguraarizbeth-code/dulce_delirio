@@ -1,0 +1,68 @@
+{% extends 'pasteleria/base.html' %}
+{% block title %}Mi Carrito - Pastelería{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-cart3"></i> Mi Carrito</h2>
+
+{% if cart.cartitem_set.all %}
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart.cartitem_set.all %}
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" width="50" height="50" class="rounded me-2" style="object-fit: cover;">
+                        {% endif %}
+                        <div>
+                            <strong>{{ item.product.name }}</strong><br>
+                            <small class="text-muted">{{ item.product.flavor }} | {{ item.product.get_size_display }}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>${{ item.product.price }}</td>
+                <td>
+                    <form method="POST" action="{% url 'update_cart_item' item.id %}" class="input-group input-group-sm" style="width: 130px;">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center">
+                        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-arrow-clockwise"></i></button>
+                    </form>
+                </td>
+                <td class="fw-bold">${{ item.subtotal }}</td>
+                <td>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash3"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="table-group-divider">
+            <tr>
+                <td colspan="4" class="text-end fw-bold fs-5">Total:</td>
+                <td class="fw-bold fs-5 text-success">${{ cart.total }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+<div class="text-end mt-3">
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary">Seguir Comprando</a>
+    <button class="btn btn-success" disabled>Proceder al Pago (Próximamente)</button>
+</div>
+{% else %}
+<div class="alert alert-info text-center py-5">
+    <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
+    Tu carrito está vacío. <a href="{% url 'home' %}" class="alert-link">¡Ve a comprar algo dulce!</a>
+</div>
+{% endif %}
+{% endblock %}

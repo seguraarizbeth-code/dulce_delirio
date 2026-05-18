@@ -1,0 +1,52 @@
+{% extends 'pasteleria/base.html' %}
+{% block title %}{{ product.name }} - Pastelería{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-6">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <span class="text-muted">Sin imagen disponible</span>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+        <h1 class="display-5">{{ product.name }}</h1>
+        <div class="mb-3">
+            {% for cat in product.categories.all %}
+                <span class="badge bg-pastel text-dark me-1">{{ cat.name }}</span>
+            {% endfor %}
+        </div>
+        <p class="text-muted">{{ product.description }}</p>
+        
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item"><strong>Tamaño:</strong> {{ product.get_size_display }}</li>
+            <li class="list-group-item"><strong>Sabor:</strong> {{ product.flavor }}</li>
+            <li class="list-group-item"><strong>Stock disponible:</strong> 
+                <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ product.stock }}</span>
+            </li>
+            <li class="list-group-item"><strong>Vendedor:</strong> {{ product.owner.username }}</li>
+            <li class="list-group-item"><strong>Fecha de publicación:</strong> {{ product.created_at|date:"d/m/Y" }}</li>
+        </ul>
+
+        <div class="d-flex align-items-center justify-content-between">
+            <span class="fs-2 fw-bold text-success">${{ product.price }} MXN</span>
+            {% if user.is_authenticated %}
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-pastel btn-lg">
+                    <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary">Inicia sesión para comprar</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

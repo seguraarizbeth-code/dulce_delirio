@@ -1,0 +1,53 @@
+{% extends 'pasteleria/base.html' %}
+{% block title %}{{ action }} Producto{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ action }} Producto de Pastelería</h2>
+<form method="POST" enctype="multipart/form-data" class="card shadow-sm p-4">
+    {% csrf_token %}
+    
+    <!-- Renderizado manual para un mejor control del diseño -->
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.name.id_for_label }}" class="form-label">Nombre del Pastel</label>
+            {{ form.name }}
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="{{ form.price.id_for_label }}" class="form-label">Precio (MXN)</label>
+            {{ form.price }}
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="{{ form.stock.id_for_label }}" class="form-label">Existencia</label>
+            {{ form.stock }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.flavor.id_for_label }}" class="form-label">Sabor</label>
+            {{ form.flavor }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="{{ form.size.id_for_label }}" class="form-label">Tamaño</label>
+            {{ form.size }}
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="{{ form.description.id_for_label }}" class="form-label">Descripción</label>
+        {{ form.description }}
+    </div>
+    <div class="mb-3">
+        <label for="{{ form.image.id_for_label }}" class="form-label">Imagen del Producto</label>
+        {{ form.image }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Categorías</label>
+        <div class="d-flex flex-wrap gap-2">
+            {{ form.categories }}
+        </div>
+    </div>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+        <button type="submit" class="btn btn-pastel">Guardar Producto</button>
+    </div>
+</form>
+{% endblock %}
