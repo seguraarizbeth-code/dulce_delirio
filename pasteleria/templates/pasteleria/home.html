@@ -1,104 +1,320 @@
 {% extends 'pasteleria/base.html' %}
 {% load static %}
 
-{% block title %}Inicio - Pastelería Dulce Hogar{% endblock %}
+{% block title %}Inicio - Pastelería Dulce Delirio{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <form method="GET" class="row g-3 p-3 bg-light rounded shadow-sm">
-            <div class="col-md-4">
-                <input type="text" name="q" class="form-control" placeholder="Buscar pasteles..." value="{{ request.GET.q }}">
-            </div>
-            <div class="col-md-2">
-                <select name="category" class="form-select">
-                    <option value="">Todas las categorías</option>
-                    {% for category in categories %}
-                        <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <select name="size" class="form-select">
-                    <option value="">Todos los tamaños</option>
-                    {% for key, value in size_choices %}
-                        <option value="{{ key }}" {% if request.GET.size == key %}selected{% endif %}>{{ value }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="flavor" class="form-control" placeholder="Sabor" value="{{ request.GET.flavor }}">
-            </div>
-            <div class="col-md-2 d-grid">
-                <button class="btn btn-pastel" type="submit">Filtrar</button>
-                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm mt-1">Limpiar</a>
-            </div>
-        </form>
-    </div>
-</div>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for product in page_obj %}
-    <div class="col">
-        <div class="card h-100 shadow-sm">
-            {% if product.image %}
-                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
-            {% else %}
-                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
-                    <span class="text-muted">Sin imagen</span>
+<div class="container py-4">
+
+    <!-- Título -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Pastelería Dulce Delirio</h1>
+        <p class="text-muted">
+           "Dulzura"
+        </p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        Buscar Pasteles
+                    </h5>
                 </div>
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <div class="mb-2">
-                    {% for cat in product.categories.all %}
-                        <span class="badge rounded-pill bg-secondary bg-opacity-25 text-dark">{{ cat.name }}</span>
-                    {% endfor %}
-                </div>
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text text-muted small flex-grow-1">{{ product.description|truncatechars:80 }}</p>
-                <div class="mt-2">
-                    <span class="badge bg-info text-dark">Tamaño: {{ product.get_size_display }}</span>
-                    <span class="badge bg-warning text-dark">Sabor: {{ product.flavor }}</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="fs-4 fw-bold text-success">${{ product.price }}</span>
-                    <small class="text-muted">Stock: {{ product.stock }}</small>
-                </div>
-            </div>
-            <div class="card-footer bg-white border-top-0">
-                <div class="d-grid gap-2">
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-secondary btn-sm">Ver Detalle</a>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-pastel btn-sm">Agregar al Carrito</a>
-                    {% endif %}
+
+                <div class="card-body">
+
+                    <form method="GET" class="row g-3">
+
+                        <!-- Buscar -->
+                        <div class="col-md-3">
+                            <label class="form-label">Buscar</label>
+
+                            <input
+                                type="text"
+                                name="q"
+                                class="form-control"
+                                placeholder="Nombre del pastel..."
+                                value="{{ request.GET.q }}"
+                            >
+                        </div>
+
+                        <!-- Categoría -->
+                        <div class="col-md-2">
+                            <label class="form-label">Categoría</label>
+
+                            <select name="category" class="form-select">
+
+                                <option value="">Todas</option>
+
+                                {% for category in categories %}
+                                    <option
+                                        value="{{ category.id }}"
+                                        {% if request.GET.category == category.id|stringformat:"s" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Tamaño -->
+                        <div class="col-md-2">
+                            <label class="form-label">Tamaño</label>
+
+                            <select name="size" class="form-select">
+
+                                <option value="">Todos</option>
+
+                                {% for key, value in size_choices %}
+                                    <option
+                                        value="{{ key }}"
+                                        {% if request.GET.size == key %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ value }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Sabor -->
+                        <div class="col-md-2">
+                            <label class="form-label">Sabor</label>
+
+                            <input
+                                type="text"
+                                name="flavor"
+                                class="form-control"
+                                placeholder="Chocolate..."
+                                value="{{ request.GET.flavor }}"
+                            >
+                        </div>
+
+                        <!-- Ingrediente -->
+                        <div class="col-md-2">
+                            <label class="form-label">Ingrediente</label>
+
+                            <select name="ingredient" class="form-select">
+
+                                <option value="">Todos</option>
+
+                                {% for ingredient in ingredients %}
+                                    <option
+                                        value="{{ ingredient.id }}"
+                                        {% if request.GET.ingredient == ingredient.id|stringformat:"s" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ ingredient.name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Botón -->
+                        <div class="col-md-1 d-grid">
+                            <label class="form-label">&nbsp;</label>
+
+                            <button class="btn btn-dark">
+                                Buscar
+                            </button>
+                        </div>
+
+                    </form>
+
                 </div>
             </div>
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 text-center py-5">
-        <i class="bi bi-cup-straw fs-1 text-muted"></i>
-        <p class="lead mt-3">No se encontraron pasteles con esos criterios.</p>
+
+    <!-- Productos -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+        {% for product in page_obj %}
+
+        <div class="col">
+
+            <div class="card h-100 shadow-sm border-0">
+
+                <!-- Imagen -->
+                {% if product.image %}
+                    <img
+                        src="{{ product.image.url }}"
+                        class="card-img-top"
+                        alt="{{ product.name }}"
+                        style="height: 250px; object-fit: cover;"
+                    >
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center"
+                         style="height:250px;">
+                        Sin imagen
+                    </div>
+                {% endif %}
+
+                <!-- Body -->
+                <div class="card-body d-flex flex-column">
+
+                    <!-- Categorías -->
+                    <div class="mb-2">
+                        {% for cat in product.categories.all %}
+                            <span class="badge bg-secondary">
+                                {{ cat.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Nombre -->
+                    <h5 class="card-title">
+                        {{ product.name }}
+                    </h5>
+
+                    <!-- Descripción -->
+                    <p class="card-text text-muted flex-grow-1">
+                        {{ product.description|truncatechars:80 }}
+                    </p>
+
+                    <!-- Tamaño y sabor -->
+                    <div class="mb-3">
+
+                        <span class="badge bg-info text-dark">
+                            {{ product.get_size_display }}
+                        </span>
+
+                        <span class="badge bg-warning text-dark">
+                            {{ product.flavor }}
+                        </span>
+
+                    </div>
+
+                    <!-- Ingredientes -->
+                    {% if product.ingredients.all %}
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            Ingredientes:
+                        </small>
+
+                        <br>
+
+                        {% for ingredient in product.ingredients.all|slice:":3" %}
+                            <span class="badge bg-light text-dark border">
+                                {{ ingredient.name }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Precio -->
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+
+                        <span class="fw-bold fs-4 text-success">
+                            ${{ product.price }}
+                        </span>
+
+                        <small class="text-muted">
+                            Stock: {{ product.stock }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer bg-white border-0">
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{% url 'product_detail' product.id %}"
+                            class="btn btn-outline-dark btn-sm"
+                        >
+                            Ver detalle
+                        </a>
+
+                        {% if user.is_authenticated %}
+
+                            <a
+                                href="{% url 'add_to_cart' product.id %}"
+                                class="btn btn-dark btn-sm"
+                            >
+                                Agregar al carrito
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12 text-center py-5">
+
+            <h4>
+                No hay productos disponibles
+            </h4>
+
+        </div>
+
+        {% endfor %}
+
     </div>
-    {% endfor %}
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+
+    <nav class="mt-5">
+
+        <ul class="pagination justify-content-center">
+
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}">
+                        Anterior
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ page_obj.number }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}">
+                        Siguiente
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
 </div>
 
-<!-- Paginación -->
-{% if page_obj.has_other_pages %}
-<nav class="mt-5">
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Anterior</a></li>
-        {% else %}
-            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
-        {% endif %}
-        <li class="page-item active"><span class="page-link">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span></li>
-        {% if page_obj.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Siguiente</a></li>
-        {% else %}
-            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
 {% endblock %}

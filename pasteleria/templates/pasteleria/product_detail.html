@@ -1,0 +1,214 @@
+{% extends 'pasteleria/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Pastelería Dulce Hogar{% endblock %}
+
+{% block content %}
+<div class="row mt-4">
+    <!-- Imagen del producto -->
+    <div class="col-md-5">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="img-fluid rounded shadow-lg" alt="{{ product.name }}">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center rounded shadow-lg" style="height: 400px;">
+                <span class="text-muted">Sin imagen disponible</span>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Información del producto -->
+    <div class="col-md-7">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+        
+        <h1 class="display-4">{{ product.name }}</h1>
+        
+        <!-- Calificación promedio -->
+        <div class="mb-3">
+            {% if product.average_rating > 0 %}
+                <span class="text-warning h4">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= product.average_rating %}
+                            ⭐
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="text-muted">({{ product.reviews.count }} reseña{{ product.reviews.count|pluralize }})</span>
+            {% else %}
+                <span class="text-muted">Sin reseñas aún</span>
+            {% endif %}
+        </div>
+        
+        <!-- Categorías -->
+        <div class="mb-3">
+            {% for cat in product.categories.all %}
+                <span class="badge bg-pastel text-dark me-1">{{ cat.name }}</span>
+            {% endfor %}
+        </div>
+        
+        <p class="lead text-muted">{{ product.description }}</p>
+        
+        <!-- Características -->
+        <div class="row mb-4">
+            <div class="col-6">
+                <ul class="list-unstyled">
+                    <li><strong><i class="bi bi-rulers"></i> Tamaño:</strong> {{ product.get_size_display }}</li>
+                    <li><strong><i class="bi bi-egg-fried"></i> Sabor:</strong> {{ product.flavor }}</li>
+                    <li><strong><i class="bi bi-clock"></i> Preparación:</strong> {{ product.preparation_time|default:"No especificado" }}</li>
+                </ul>
+            </div>
+            <div class="col-6">
+                <ul class="list-unstyled">
+                    <li><strong>Vendedor:</strong> {{ product.owner.username }}</li>
+                    <li><strong>Publicado:</strong> {{ product.created_at|date:"d/m/Y" }}</li>
+                    <li>
+                        <strong>Stock:</strong> 
+                        <span class="badge {% if product.is_in_stock %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ product.stock }} disponible{{ product.stock|pluralize }}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Ingredientes -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-card-list"></i> Ingredientes</h5>
+            </div>
+            <div class="card-body">
+                {% if product.ingredients.all %}
+                    <div class="row">
+                        {% for ingredient in product.ingredients.all %}
+                            <div class="col-md-6 mb-2">
+                                <span class="badge bg-light text-dark border">
+                                    {{ ingredient.name }}
+                                    {% if ingredient.is_allergen %}
+                                        <span class="text-danger" title="{{ ingredient.allergen_type }}">⚠️</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if product.allergens %}
+                        <div class="alert alert-warning mt-3 mb-0">
+                            <i class="bi bi-exclamation-triangle-fill"></i> 
+                            <strong>Contiene alérgenos:</strong> 
+                            {% for allergen in product.allergens %}
+                                {{ allergen.allergen_type }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted mb-0">No se han especificado ingredientes.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Botón de compra -->
+        <div class="d-flex align-items-center justify-content-between bg-light p-3 rounded">
+            <span class="fs-2 fw-bold text-success">${{ product.price }} MXN</span>
+            {% if user.is_authenticated %}
+                {% if product.is_in_stock %}
+                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-pastel btn-lg">
+                        <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                    </a>
+                {% else %}
+                    <button class="btn btn-secondary btn-lg" disabled>
+                        <i class="bi bi-x-circle"></i> Agotado Temporalmente
+                    </button>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-pastel btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Inicia sesión para comprar
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Sección de Reseñas -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-chat-quote"></i> Reseñas de Clientes</h2>
+        
+        {% if user.is_authenticated and review_form %}
+            <!-- Formulario para nueva reseña -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-pastel text-white">
+                    <h5 class="mb-0">Deja tu reseña</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ review_form.as_p }}
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-send"></i> Enviar Reseña
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% elif user.is_authenticated and user_review %}
+            <div class="alert alert-info">
+                Ya has dejado tu reseña para este producto. ¡Gracias!
+            </div>
+        {% endif %}
+        
+        <!-- Lista de reseñas -->
+        {% if reviews %}
+            {% for review in reviews %}
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <span class="text-warning h5">
+                                    {{ review.get_rating_display }}
+                                </span>
+                                <strong class="ms-2">{{ review.user.username }}</strong>
+                            </div>
+                            <small class="text-muted">{{ review.created_at|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="mt-2">{{ review.comment }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-chat-square-text fs-1 text-muted"></i>
+                <p class="text-muted mt-2">Sé el primero en dejar una reseña</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Productos Relacionados -->
+{% if related_products %}
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="mb-4">También te podría gustar</h2>
+        <div class="row">
+            {% for related in related_products %}
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        {% if related.image %}
+                            <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.name }}" style="height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h6 class="card-title">{{ related.name }}</h6>
+                            <p class="card-text small text-muted">${{ related.price }}</p>
+                            <a href="{% url 'product_detail' related.id %}" class="btn btn-outline-secondary btn-sm stretched-link">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
