@@ -1,75 +1,320 @@
 {% extends 'pasteleria/base.html' %}
 {% load static %}
 
-{% block title %}Mis Pedidos - Dulce Delirio{% endblock %}
+{% block title %}Inicio - Pastelería Dulce Delirio{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-receipt"></i> Mis Pedidos</h2>
 
-{% if orders %}
-<div class="row">
-    {% for order in orders %}
-    <div class="col-md-6 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <strong>Pedido #{{ order.id|slice:"-8" }}</strong>
-                <span class="text-muted small">{{ order.created_at|date:"d/m/Y H:i" }}</span>
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-6">
-                        <small class="text-muted">Total</small>
-                        <br>
-                        <span class="fw-bold text-success fs-5">${{ order.total }}</span>
-                    </div>
-                    <div class="col-6">
-                        <small class="text-muted">Método de pago</small>
-                        <br>
-                        <span>{{ order.get_payment_method_display }}</span>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <small class="text-muted">Estado</small>
-                    <br>
-                    <span class="badge {% if order.status == 'PAID' %}bg-success{% else %}bg-warning{% endif %}">
-                        {{ order.get_status_display }}
-                    </span>
-                </div>
+<div class="container py-4">
+
+    <!-- Título -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Pastelería Dulce Delirio</h1>
+        <p class="text-muted">
+           "Dulzura"
+        </p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
                 
-                <button class="btn btn-outline-secondary btn-sm w-100" type="button" data-bs-toggle="collapse" data-bs-target="#items{{ order.id }}">
-                    <i class="bi bi-eye"></i> Ver productos
-                </button>
-                
-                <div class="collapse mt-3" id="items{{ order.id }}">
-                    <div class="border-top pt-2">
-                        {% for item in order.items.all %}
-                        <div class="d-flex justify-content-between small mb-1">
-                            <span>{{ item.quantity }} x {{ item.product_name }}</span>
-                            <span>${{ item.subtotal }}</span>
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        Buscar Pasteles
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <form method="GET" class="row g-3">
+
+                        <!-- Buscar -->
+                        <div class="col-md-3">
+                            <label class="form-label">Buscar</label>
+
+                            <input
+                                type="text"
+                                name="q"
+                                class="form-control"
+                                placeholder="Nombre del pastel..."
+                                value="{{ request.GET.q }}"
+                            >
                         </div>
-                        {% empty %}
-                            {% for item in order.get_items %}
-                            <div class="d-flex justify-content-between small mb-1">
-                                <span>{{ item.quantity }} x {{ item.product.name }}</span>
-                                <span>${{ item.subtotal }}</span>
-                            </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
+
+                        <!-- Categoría -->
+                        <div class="col-md-2">
+                            <label class="form-label">Categoría</label>
+
+                            <select name="category" class="form-select">
+
+                                <option value="">Todas</option>
+
+                                {% for category in categories %}
+                                    <option
+                                        value="{{ category.id }}"
+                                        {% if request.GET.category == category.id|stringformat:"s" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Tamaño -->
+                        <div class="col-md-2">
+                            <label class="form-label">Tamaño</label>
+
+                            <select name="size" class="form-select">
+
+                                <option value="">Todos</option>
+
+                                {% for key, value in size_choices %}
+                                    <option
+                                        value="{{ key }}"
+                                        {% if request.GET.size == key %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ value }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Sabor -->
+                        <div class="col-md-2">
+                            <label class="form-label">Sabor</label>
+
+                            <input
+                                type="text"
+                                name="flavor"
+                                class="form-control"
+                                placeholder="Chocolate..."
+                                value="{{ request.GET.flavor }}"
+                            >
+                        </div>
+
+                        <!-- Ingrediente -->
+                        <div class="col-md-2">
+                            <label class="form-label">Ingrediente</label>
+
+                            <select name="ingredient" class="form-select">
+
+                                <option value="">Todos</option>
+
+                                {% for ingredient in ingredients %}
+                                    <option
+                                        value="{{ ingredient.id }}"
+                                        {% if request.GET.ingredient == ingredient.id|stringformat:"s" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ ingredient.name }}
+                                    </option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+
+                        <!-- Botón -->
+                        <div class="col-md-1 d-grid">
+                            <label class="form-label">&nbsp;</label>
+
+                            <button class="btn btn-dark">
+                                Buscar
+                            </button>
+                        </div>
+
+                    </form>
+
                 </div>
             </div>
         </div>
     </div>
-    {% endfor %}
+
+    <!-- Productos -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+
+        {% for product in page_obj %}
+
+        <div class="col">
+
+            <div class="card h-100 shadow-sm border-0">
+
+                <!-- Imagen -->
+                {% if product.image %}
+                    <img
+                        src="{{ product.image.url }}"
+                        class="card-img-top"
+                        alt="{{ product.name }}"
+                        style="height: 250px; object-fit: cover;"
+                    >
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center"
+                         style="height:250px;">
+                        Sin imagen
+                    </div>
+                {% endif %}
+
+                <!-- Body -->
+                <div class="card-body d-flex flex-column">
+
+                    <!-- Categorías -->
+                    <div class="mb-2">
+                        {% for cat in product.categories.all %}
+                            <span class="badge bg-secondary">
+                                {{ cat.name }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Nombre -->
+                    <h5 class="card-title">
+                        {{ product.name }}
+                    </h5>
+
+                    <!-- Descripción -->
+                    <p class="card-text text-muted flex-grow-1">
+                        {{ product.description|truncatechars:80 }}
+                    </p>
+
+                    <!-- Tamaño y sabor -->
+                    <div class="mb-3">
+
+                        <span class="badge bg-info text-dark">
+                            {{ product.get_size_display }}
+                        </span>
+
+                        <span class="badge bg-warning text-dark">
+                            {{ product.flavor }}
+                        </span>
+
+                    </div>
+
+                    <!-- Ingredientes -->
+                    {% if product.ingredients.all %}
+
+                    <div class="mb-3">
+
+                        <small class="text-muted">
+                            Ingredientes:
+                        </small>
+
+                        <br>
+
+                        {% for ingredient in product.ingredients.all|slice:":3" %}
+                            <span class="badge bg-light text-dark border">
+                                {{ ingredient.name }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+                    <!-- Precio -->
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+
+                        <span class="fw-bold fs-4 text-success">
+                            ${{ product.price }}
+                        </span>
+
+                        <small class="text-muted">
+                            Stock: {{ product.stock }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer bg-white border-0">
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            href="{% url 'product_detail' product.id %}"
+                            class="btn btn-outline-dark btn-sm"
+                        >
+                            Ver detalle
+                        </a>
+
+                        {% if user.is_authenticated %}
+
+                            <a
+                                href="{% url 'add_to_cart' product.id %}"
+                                class="btn btn-dark btn-sm"
+                            >
+                                Agregar al carrito
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="col-12 text-center py-5">
+
+            <h4>
+                No hay productos disponibles
+            </h4>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- Paginación -->
+    {% if page_obj.has_other_pages %}
+
+    <nav class="mt-5">
+
+        <ul class="pagination justify-content-center">
+
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}">
+                        Anterior
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    {{ page_obj.number }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}">
+                        Siguiente
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
 </div>
-{% else %}
-<div class="alert alert-info text-center py-5">
-    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-    <h4>No has realizado ningún pedido aún</h4>
-    <p>¡Empieza a comprar nuestros deliciosos pasteles!</p>
-    <a href="{% url 'home' %}" class="btn btn-pastel mt-2">
-        <i class="bi bi-cake2"></i> Ver pasteles
-    </a>
-</div>
-{% endif %}
+
 {% endblock %}
