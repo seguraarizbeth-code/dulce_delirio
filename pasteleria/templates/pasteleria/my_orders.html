@@ -1,0 +1,75 @@
+{% extends 'pasteleria/base.html' %}
+{% load static %}
+
+{% block title %}Mis Pedidos - Dulce Delirio{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-receipt"></i> Mis Pedidos</h2>
+
+{% if orders %}
+<div class="row">
+    {% for order in orders %}
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <strong>Pedido #{{ order.id|slice:"-8" }}</strong>
+                <span class="text-muted small">{{ order.created_at|date:"d/m/Y H:i" }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <small class="text-muted">Total</small>
+                        <br>
+                        <span class="fw-bold text-success fs-5">${{ order.total }}</span>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Método de pago</small>
+                        <br>
+                        <span>{{ order.get_payment_method_display }}</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <small class="text-muted">Estado</small>
+                    <br>
+                    <span class="badge {% if order.status == 'PAID' %}bg-success{% else %}bg-warning{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+                
+                <button class="btn btn-outline-secondary btn-sm w-100" type="button" data-bs-toggle="collapse" data-bs-target="#items{{ order.id }}">
+                    <i class="bi bi-eye"></i> Ver productos
+                </button>
+                
+                <div class="collapse mt-3" id="items{{ order.id }}">
+                    <div class="border-top pt-2">
+                        {% for item in order.items.all %}
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span>{{ item.quantity }} x {{ item.product_name }}</span>
+                            <span>${{ item.subtotal }}</span>
+                        </div>
+                        {% empty %}
+                            {% for item in order.get_items %}
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>{{ item.quantity }} x {{ item.product.name }}</span>
+                                <span>${{ item.subtotal }}</span>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info text-center py-5">
+    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+    <h4>No has realizado ningún pedido aún</h4>
+    <p>¡Empieza a comprar nuestros deliciosos pasteles!</p>
+    <a href="{% url 'home' %}" class="btn btn-pastel mt-2">
+        <i class="bi bi-cake2"></i> Ver pasteles
+    </a>
+</div>
+{% endif %}
+{% endblock %}

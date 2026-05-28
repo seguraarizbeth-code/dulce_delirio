@@ -14,6 +14,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+
 # =========================
 # 🏷️ Categoría
 # =========================
@@ -28,8 +29,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 # =========================
-# 🥚 Ingrediente (NUEVA TABLA)
+# 🥚 Ingrediente
 # =========================
 class Ingredient(models.Model):
     """Ingredientes que pueden contener los productos de pastelería"""
@@ -53,8 +55,9 @@ class Ingredient(models.Model):
             return f"{self.name} ⚠️ ({self.allergen_type})"
         return self.name
 
+
 # =========================
-# 🧁 Producto (Pastel) - ACTUALIZADO
+# 🧁 Producto (Pastel)
 # =========================
 class Product(models.Model):
     SIZE_CHOICES = [
@@ -92,7 +95,7 @@ class Product(models.Model):
         verbose_name="Categorías"
     )
     
-    # 🆕 Relación ManyToMany: Un producto puede tener muchos ingredientes
+    # Relación ManyToMany: Un producto puede tener muchos ingredientes
     ingredients = models.ManyToManyField(
         Ingredient,
         related_name='products',
@@ -128,8 +131,9 @@ class Product(models.Model):
         """Verifica si hay stock disponible"""
         return self.stock > 0 and self.is_available
 
+
 # =========================
-# ⭐ Reseña/Valoración (NUEVA TABLA)
+# ⭐ Reseña/Valoración
 # =========================
 class Review(models.Model):
     """Reseñas y calificaciones de productos por parte de clientes"""
@@ -157,14 +161,14 @@ class Review(models.Model):
     class Meta:
         verbose_name_plural = "Reseñas"
         ordering = ['-created_at']
-        # Un usuario solo puede dejar una reseña por producto
         unique_together = ['product', 'user']
     
     def __str__(self):
         return f"{'⭐' * self.rating} - {self.user.username} sobre {self.product.name}"
 
+
 # =========================
-# 🛒 Carrito (Sin cambios)
+# 🛒 Carrito
 # =========================
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -188,8 +192,9 @@ class Cart(models.Model):
     def total(self):
         return sum(item.subtotal for item in self.cartitem_set.all())
 
+
 # =========================
-# 📦 CartItem (Sin cambios)
+# 📦 CartItem
 # =========================
 class CartItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -208,3 +213,96 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
+
+
+# =========================
+# 🧾 Pedido / Orden de Compra
+# =========================
+class Order(models.Model):
+    PAYMENT_METHODS = [
+        ('CARD', 'Tarjeta de crédito/débito'),
+        ('PAYPAL', 'PayPal'),
+        ('TRANSFER', 'Transferencia bancaria'),
+        ('CASH', 'Efectivo (pago contra entrega)'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('PENDING', 'Pendiente'),
+        ('PAID', 'Pagado'),
+        ('CANCELLED', 'Cancelado'),
+        ('COMPLETED', 'Completado'),
+    ]
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name="Cliente")
+    cart = models.OneToOneField(Cart, on_delete=models.SET_NULL, null=True, blank=True, related_name='order', verbose_name="Carrito asociado")
+    
+    # Datos del pedido
+    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total")
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, verbose_name="Método de pago")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', verbose_name="Estado")
+    
+    # Datos de pago simulados (para historial)
+    card_last_digits = models.CharField(max_length=4, blank=True, null=True, verbose_name="Últimos 4 dígitos")
+    transaction_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID de transacción")
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha del pedido")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
+    
+    class Meta:
+        verbose_name_plural = "Pedidos"
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Pedido {self.id} - {self.user.username} - ${self.total}"
+    
+    @property
+    def get_items(self):
+        if self.cart:
+            return self.cart.cartitem_set.all()
+        return []
+
+
+# =========================
+# 📋 OrderItem (copia de seguridad)
+# =========================
+class OrderItem(models.Model):
+    """Item dentro de un pedido (copia de seguridad)"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name="Pedido")
+    product_name = models.CharField(max_length=200, verbose_name="Nombre del producto")
+    product_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
+    quantity = models.PositiveIntegerField(verbose_name="Cantidad")
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Subtotal")
+    
+    class Meta:
+        verbose_name_plural = "Items del pedido"
+    
+    def __str__(self):
+        return f"{self.quantity} x {self.product_name}"
+
+
+# =========================
+# 💳 Pago simulado
+# =========================
+class Payment(models.Model):
+    """Registro de pago simulado"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payment', verbose_name="Pedido")
+    
+    # Datos ficticios (no se almacenan datos reales sensibles)
+    card_holder_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Titular de la tarjeta")
+    payment_method = models.CharField(max_length=20, choices=Order.PAYMENT_METHODS, verbose_name="Método de pago")
+    
+    # Simulación
+    is_successful = models.BooleanField(default=True, verbose_name="¿Pago exitoso?")
+    transaction_id = models.CharField(max_length=100, unique=True, verbose_name="ID de transacción")
+    response_message = models.TextField(blank=True, verbose_name="Mensaje de respuesta")
+    
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha del pago")
+    
+    class Meta:
+        verbose_name_plural = "Pagos"
+    
+    def __str__(self):
+        return f"Pago {self.transaction_id} - ${self.order.total}"

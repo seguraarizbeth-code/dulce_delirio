@@ -1,0 +1,104 @@
+{% extends 'pasteleria/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Dulce Delirio{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-pastel text-white">
+                <h4 class="mb-0"><i class="bi bi-credit-card"></i> Datos de pago</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="paymentForm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Método de pago</label>
+                        {{ form.payment_method }}
+                    </div>
+                    
+                    <div id="cardFields">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del titular</label>
+                            {{ form.card_holder_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Número de tarjeta</label>
+                            {{ form.card_number }}
+                            <small class="text-muted">Solo para simulación, no guardamos datos reales</small>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label">Fecha expiración (MM/AA)</label>
+                                {{ form.card_expiry }}
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">CVV</label>
+                                {{ form.card_cvv }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="noCardMessage" class="alert alert-info" style="display: none;">
+                        <i class="bi bi-info-circle"></i> Para este método de pago, coordina con el vendedor. Recibirás instrucciones por correo electrónico.
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-pastel btn-lg">
+                            <i class="bi bi-shield-check"></i> Confirmar pago de ${{ cart.total }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-cart3"></i> Resumen de compra</h5>
+            </div>
+            <div class="card-body">
+                {% for item in cart.cartitem_set.all %}
+                <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <br>
+                        <small class="text-muted">Cantidad: {{ item.quantity }}</small>
+                    </div>
+                    <span class="fw-bold">${{ item.subtotal }}</span>
+                </div>
+                {% endfor %}
+                <hr>
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Total</span>
+                    <span class="text-success">${{ cart.total }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const paymentMethod = document.getElementById('id_payment_method');
+    const cardFields = document.getElementById('cardFields');
+    const noCardMessage = document.getElementById('noCardMessage');
+    
+    function togglePaymentFields() {
+        if (paymentMethod.value === 'CARD') {
+            cardFields.style.display = 'block';
+            noCardMessage.style.display = 'none';
+        } else {
+            cardFields.style.display = 'none';
+            noCardMessage.style.display = 'block';
+        }
+    }
+    
+    if (paymentMethod) {
+        paymentMethod.addEventListener('change', togglePaymentFields);
+        togglePaymentFields();
+    }
+</script>
+{% endblock %}

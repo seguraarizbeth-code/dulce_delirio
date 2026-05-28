@@ -1,0 +1,124 @@
+{% extends 'pasteleria/base.html' %}
+{% load static %}
+
+{% block title %}Pedido Confirmado - Dulce Delirio{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg border-0 text-center">
+            <div class="card-body p-5">
+                <!-- Icono de éxito -->
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                </div>
+                
+                <h1 class="display-5 fw-bold mb-3">¡Compra Realizada!</h1>
+                <p class="lead mb-4">Tu pedido ha sido confirmado exitosamente.</p>
+                
+                <div class="alert alert-pastel mb-4">
+                    <i class="bi bi-envelope"></i> 
+                    Te hemos enviado un correo con los detalles de tu compra.
+                </div>
+                
+                <!-- Detalles del pedido -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Detalles del Pedido</h5>
+                    </div>
+                    <div class="card-body text-start">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Número de pedido:</strong>
+                            </div>
+                            <div class="col-6">
+                                {{ order.id }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Fecha:</strong>
+                            </div>
+                            <div class="col-6">
+                                {{ order.created_at|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Total:</strong>
+                            </div>
+                            <div class="col-6 text-success fw-bold fs-5">
+                                ${{ order.total }}
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Método de pago:</strong>
+                            </div>
+                            <div class="col-6">
+                                {{ order.get_payment_method_display }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Estado:</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge bg-success">Pagado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Productos comprados -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Productos</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for item in order.items.all %}
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <div>
+                                <strong>{{ item.product_name }}</strong>
+                                <br>
+                                <small class="text-muted">Cantidad: {{ item.quantity }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="fw-bold">${{ item.subtotal }}</span>
+                                <br>
+                                <small class="text-muted">${{ item.product_price }} c/u</small>
+                            </div>
+                        </div>
+                        {% empty %}
+                            {% for item in order.get_items %}
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                                <div>
+                                    <strong>{{ item.product.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">Cantidad: {{ item.quantity }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold">${{ item.subtotal }}</span>
+                                    <br>
+                                    <small class="text-muted">${{ item.product.price }} c/u</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'home' %}" class="btn btn-pastel btn-lg">
+                        <i class="bi bi-house"></i> Seguir Comprando
+                    </a>
+                    <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-receipt"></i> Ver Mis Pedidos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
