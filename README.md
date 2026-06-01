@@ -1,17 +1,17 @@
 ==========ÍNDICE==========
 
-INTRODUCCIÓN........................................................3
-DESARROLLO..........................................................5
-TIPO DE RELACIONES..................................................13
-DISEÑO DE LA BASE DE DATOS..........................................16
-ADMINISTRACIÓN DEL SISTEMA..........................................17
-ELIMINACIÓN DE DATOS................................................19
-ACTUALIZACIÓN DE DATOS..............................................20
-FUNCIONAMIENTO DE LOS VIEWS Y SUS INTERACCIONES.....................21
-VIEWS Y URLS........................................................21
-VIEWS Y TEMPLATES...................................................21
-INTEGRACIÓN DEL SISTEMA.............................................21
-CONCLUSIONES FINALES................................................23
+* [INTRODUCCIÓN](#introducción) ........................................................ 3
+* [DESARROLLO](#desarrollo) .......................................................... 5
+* [TIPO DE RELACIONES](#tipo-de-relaciones) .................................................. 13
+* [DISEÑO DE LA BASE DE DATOS](#diseño-de-la-base-de-datos) .......................................... 16
+* [ADMINISTRACIÓN DEL SISTEMA](#administración-del-sistema) .......................................... 17
+* [ELIMINACIÓN DE DATOS](#eliminación-de-datos) ................................................ 19
+* [ACTUALIZACIÓN DE DATOS](#actualización-de-datos) .............................................. 20
+* [FUNCIONAMIENTO DE LOS VIEWS Y SUS INTERACCIONES](#funcionamiento-de-los-views-y-sus-interacciones) ..................... 21
+* [VIEWS Y URLS](#views-y-urls) ........................................................ 21
+* [VIEWS Y TEMPLATES](#views-y-templates) ................................................... 21
+* [INTEGRACIÓN DEL SISTEMA](#integración-del-sistema) ............................................. 21
+* [CONCLUSIONES FINALES](#conclusiones-finales) ................................................ 23
 
 ==========INTRODUCCIÓN==========
 
