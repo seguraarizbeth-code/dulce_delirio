@@ -1,5 +1,3 @@
-"# dulce_delirio" 
-
 
 
 ÍNDICE
@@ -18,122 +16,564 @@ INTEGRACIÓN DEL SISTEMA	21
 CONCLUSIONES FINALES	23
 
 
-* Crear proyecto en django
-django-admin startproject dulde_delirio
-cd dulde_delirio
-python manage.py startapp pasteleria
-
-2 Configurar settings.py
- INSTALLED_APPS = [
-     'pasteleria'
-]
-📌 Usuario personalizado
-AUTH_USER_MODEL = 'pasteleria.User'
 
 
+INTRODUCCIÓN
 
-![alt text](image-1.png)
+El objetivo de este documento fue ir recalcando puntos importantes sobre este último parcial en la que teníamos que realizar un proyecto con, lo que ya habíamos visto anteriormente, lo cual decidimos hacer sobre una pastelería, que básicamente podría parecerse a una tienda online en la que utilizamos varios modelos para que pudiera guardar la información acerca de los clientes, precios, actividades del admin entre otras cosas.
+
+Este proyecto tiene como objetivo aplicar la relación que tiene Python de uno a uno, uno a muchos y muchos a muchos, para demostrar el aprendizaje y rendimiento que tuvimos en esta materia a lo largo del semestre, al igual que aplicar lo visto en clases pasadas. Uno de los objetivos principales es comercializar y promocionar distintos postres de manera online, para satisfacer los antojos de los clientes y facilitar su pedido. 
+
+El propósito es mostrar a los clientes la autenticidad y sabor tan único de los postres, al igual que la originalidad de una pastelería en línea.
+
+Nuestro proyecto está basado en vender productos de calidad en la que los clientes pueden pedir, dejar ordenes para fechas importantes y obtener precios accesibles,también contamos con los ingredientes que tu quisieras que tengan tus pasteles y recomendaciones o críticas que pudieron mejorar la pastelería,tiene acceso al carrito para ordenar y tiene para que puedas decidir la forma en la que puedes pagar,tienes acceso de las fechas en las que estuvieron disponibles los productos y a que hora los subieron para poder comparar en momentos exactos.
+Además, el proyecto fue desarrollado pensando en que fuera fácil de usar tanto para los clientes como para el administrador de la página. Por eso se implementaron diferentes funciones que ayudan a organizar mejor la información y mantener un control sobre los productos y pedidos realizados.
+Dentro de la aplicación también se pueden registrar datos importantes de los usuarios, como sus pedidos, productos seleccionados y métodos de pago, permitiendo que la información quede almacenada en la base de datos. De igual manera, el admin puede agregar, modificar, visualizar y eliminar información desde el panel de administración.
+Para el desarrollo del proyecto se utilizaron modelos relacionados entre sí, lo que permitió conectar la información de manera más organizada. Gracias a esto, los productos pueden relacionarse con categorías, pedidos y clientes dentro de la plataforma.
+También se trabajó en la parte visual de la aplicación para que la página tuviera una apariencia más ordenada y llamativa para los usuarios. Se buscó que la navegación fuera sencilla y que los clientes pudieran encontrar fácilmente los productos y opciones disponibles dentro de la pastelería en línea.
+Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, bases de datos relacionales y desarrollo web, poniendo en práctica diferentes herramientas vistas durante el semestre.
 
 
 
-pasteleria/models.py
-# pasteleria/models.py
-import uuid
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator, MaxValueValidator
 
-# =========================
-# 👤 Usuario
-# =========================
+Tecnología / Herramienta
+Uso dentro del proyecto
+Python
+Lenguaje de programación principal utilizado para desarrollar toda la lógica del sistema y el funcionamiento del backend.
+Django 5.2
+Framework utilizado para crear la aplicación web, administrar modelos, views, urls, formularios y el panel administrativo.
+Visual Studio Code
+Editor de código utilizado para programar, organizar y ejecutar el proyecto de manera eficiente.
+GitHub
+Plataforma utilizada para almacenar el repositorio del proyecto, guardar avances y realizar control de versiones del código.
+HTML
+Lenguaje utilizado para crear la estructura visual de las páginas web del sistema.
+CSS
+Utilizado para diseñar y dar estilos visuales a la interfaz de la pastelería.
+Bootstrap
+Framework de diseño utilizado para crear interfaces más modernas, organizadas y adaptables.
+SQLite
+Base de datos utilizada para almacenar información de usuarios, productos, pedidos, reseñas y pagos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DESARROLLO
+
+Modelos:
+Se utilizaron diferentes modelos dentro de la base de datos, los cuales permiten guardar y organizar la información de manera más sencilla. Cada modelo tiene su función en el sistema, como usuarios, productos, categorías, ingredientes, reseñas, etc. Todos ayudan a que la información se conecte y que así el programa funcione correctamente.
+
+
+Modelo “User”
 class User(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    is_seller = models.BooleanField(default=False, verbose_name="¿Es vendedor?")
-
-    def __str__(self):
-        return self.username
+Se utiliza para guardar la información de los usuarios que se registren en la página. Se agregó una opción para saber si el usuario es cliente o admin, también incluye datos básicos, como el nombre de usuario, contraseña y correo electrónico.
 
 
-# =========================
-# 🏷️ Categoría
-# =========================
+Modelo “Category”
 class Category(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100, verbose_name="Nombre")
-    description = models.TextField(blank=True, verbose_name="Descripción")
-
-    class Meta:
-        verbose_name_plural = "Categorías"
-        
-    def __str__(self):
-        return self.name
+Se utiliza para guardar las categorías de los productos de la pastelería, cada una tiene un nombre y descripción para organizar los postres dentro de la página. De esta manera se encuentran de manera más eficaz y sencilla dependiendo de lo que el cliente esté buscando. 
 
 
-# =========================
-# 🥚 Ingrediente
-# =========================
+Modelo “Ingredient”
 class Ingredient(models.Model):
-    """Ingredientes que pueden contener los productos de pastelería"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=150, verbose_name="Nombre del ingrediente")
-    description = models.TextField(blank=True, verbose_name="Descripción")
-    is_allergen = models.BooleanField(default=False, verbose_name="¿Es alérgeno común?")
-    allergen_type = models.CharField(
-        max_length=100, 
-        blank=True, 
+Este modelo es para almacenar los ingredientes que se utilizan en la papelería, que nos deja registrar y organizar la información de cada uno, para saber qué contiene cada uno.
+este campo indica si puede tener algún tipo de halogeno para que los clientes puedan saber lo que contiene cada pastel y saber si son alérgicos a algún ingrediente.
+allergen_type = models.CharField(
+        max_length=100,
+        blank=True,
         verbose_name="Tipo de alérgeno",
         help_text="Ej: Gluten, Lácteos, Huevo, Frutos secos, etc."
-    )
-    
-    class Meta:
-        verbose_name_plural = "Ingredientes"
-        ordering = ['name']
-        
-    def __str__(self):
-        if self.is_allergen:
-            return f"{self.name} ⚠️ ({self.allergen_type})"
-        return self.name
 
 
-# =========================
-# 🧁 Producto (Pastel)
-# =========================
+Modelo “Product”
 class Product(models.Model):
-    SIZE_CHOICES = [
-        ('CH', 'Chico'),
-        ('MD', 'Mediano'),
-        ('GD', 'Grande'),
-        ('XXL', 'Extragrande'),
-    ]
+Este es principal en el proyecto, guarda toda la información relacionada con los productos de la pastelería, como:
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=150, verbose_name="Nombre del producto")
-    description = models.TextField(verbose_name="Descripción")
-    image = models.ImageField(upload_to='upload/', blank=True, null=True, verbose_name="Imagen")
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
-    stock = models.PositiveIntegerField(default=0, verbose_name="Existencia")
-    
-    # Campos de pastelería
-    size = models.CharField(max_length=3, choices=SIZE_CHOICES, default='MD', verbose_name="Tamaño")
-    flavor = models.CharField(max_length=100, verbose_name="Sabor")
-    preparation_time = models.CharField(max_length=50, blank=True, verbose_name="Tiempo de preparación", help_text="Ej: 45 min, 2 horas")
-    is_available = models.BooleanField(default=True, verbose_name="¿Disponible?")
-    
-    # Relación OneToMany: Un vendedor puede tener muchos productos
-    owner = models.ForeignKey(
+Nombre del producto 
+name = models.CharField(max_length=150, verbose_name="Nombre del producto")
+descripción
+description = models.TextField(verbose_name="Descripción")
+imagen 
+image = models.ImageField(upload_to='upload/', blank=True, null=True, verbose_name="Imagen")
+
+
+precio
+price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
+cantidad
+stock = models.PositiveIntegerField(default=0, verbose_name="Existencia")
+tamaño
+size = models.CharField(max_length=3, choices=SIZE_CHOICES, default='MD', verbose_name="Tamaño")
+sabor
+flavor = models.CharField(max_length=100, verbose_name="Sabor")
+
+
+
+
+Modelo “Review”
+class Review(models.Model):
+Se utiliza para guardar reseñas que hacen los clientes sobre los productos, cada reseña incluye:
+
+
+Producto relacionado
+product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name="Producto"
+Usuario que hizo la reseña
+ user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='products',
-        verbose_name="Vendedor"
+        related_name='reviews',
+        verbose_name="Cliente"
+Calificación del 1-5
+rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name="Calificación",
+        help_text="Del 1 al 5"
+Comentario que se hizo 
+  comment = models.TextField(verbose_name="Comentario")
+Fecha en que se hizo 
+created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de reseña")
+
+
+
+
+Modelos “Cart”
+Permite guardar los productos que el cliente quiere comprar antes de terminar el pedido, además de calcular el total de tu compra según la cantidad de productos que hayas agregado.
+class Cart(models.Model):
+
+
+
+
+Modelo “Cartltem”
+class CartItem(models.Model):
+Se utiliza para relacionar los productos del carrito de compras, también calcula el total dependiendo la cantidad de productos y su precio, por eso es que el carrito puede tener varios productos al mismo tiempo en una sola compra. El modelo guarda:
+
+El carrito relacionado
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name="Carrito")
+El producto agregado
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
+La cantidad seleccionada
+    quantity = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
+
+
+
+
+
+Views:
+Fueron utilizados para la lógica y funcionamiento de la página, se encargan de conectar la base de datos con las plantillas para mostrar la información correcta al usuario. Con estas se pueden controlar funciones como el registro de usuario e inicio de sesión, administrar productos, carrito de compras, reseñas, etc.
+
+
+Vista “Home”
+def home(request):
+Funciona como página principal de la pastelería, se muestran los productos disponibles junto con distintos filtro y un buscador, también se agregaron páginas para mostrar los productos de forma más organizada, mostrando cierta cantidad por página. Los usuarios pueden buscar:
+
+Nombre
+ if query:
+        products = products.filter(
+            Q(name__icontains=query)
+Descripción
+ if query:
+        products = products.filter(
+            Q(description__icontains=query)
+Sabor
+ if flavor_query:
+        products = products.filter(flavor__icontains=flavor_query)
+Categoría
+ if category_id:
+        products = products.filter(categories__id=category_id)
+Tamaño
+if size_filter:
+        products = products.filter(size=size_filter)
+Ingredientes 
+if ingredient_filter:
+        products = products.filter(ingredients__id=ingredient_filter)
+
+
+
+
+Vista “Register”
+Se utiliza para registrar nuevos usuarios dentro de la página, si hace los pasos correctos el usuario se guarda automáticamente en la base de datos y después puede iniciar sesión dentro de la página
+def register(request)
+
+
+Vista ”Login_view”
+Permite que los usuarios inicien sesión utilizando el nombre de usuario y contraseña. Si los datos son correctos el sistema va a mandarlo al sitio correspondiente dependiendo si es cliente o administrador
+def login_view(request)
+
+
+Vista “Logout_view”
+Es para cerrar la sesión del usuario actual en la página y regresar al inicio de la página 
+def logout_view(request)
+
+
+Vista “Dashboard”
+def dashboard(request):
+Funciona como panel de administración para los vendedores/administradores, además de verificar que solo los vendedores/administradores tengan acceso a esta parte del sistema, tales como:
+
+
+Sus productos
+    products = Product.objects.filter(owner=request.user).prefetch_related('reviews', 'ingredients')
+Total de productos registrados
+    total_products = products.count()
+Cantidad de reseñas
+    total_reviews = Review.objects.filter(product__owner=request.user).count()
+Promedio de calificaciones 
+avg_rating = Review.objects.filter(product__owner=request.user).aggregate(
+        avg=Avg('rating')
+    )['avg'] or 0
+
+
+
+
+Vista “Product_create”
+def product_create(request):
+Permite agregar nuevos productos a la base de datos, cuando se guarda correctamente el sistema manda un mensaje de confirmación. La información que puede registrarse es:
+
+
+Nombre
+Precio
+
+
+Imagen
+
+
+Sabor
+
+
+Ingredientes
+
+
+Tamaño
+
+
+Existencia 
+
+
+
+
+Vista “Product_update”
+Se utiliza para modificar productos que ya están registrados, se verifica que el producto sea del vendedor que intenta editarlo para evitar cambios no autorizados.
+def product_update(request, pk)
+
+
+Vista “Product_delete”
+Permite eliminar productos ya registrados en el sistema, antes de eliminar algún producto se manda solicitud de confirmación para evitar eliminaciones accidentales.
+def product_delete(request, pk)
+
+
+Vista “Product_detail”
+def product_detail(request, pk):
+Muestra toda la información detallada del producto, también permite que los usuarios registrados puedan dejar algún comentario o reseña sobre el producto. Cosas como:
+
+
+Ingredientes
+Reseñas
+Calificaciones
+Productos relacionados 
+
+
+Vista “Cart_detail”
+Muestra todos los productos agregados al carrito del usuario, se ven todos los productos seleccionados, cantidades y el total de la compra
+def cart_detail(request):
+
+
+Vista “Add_to_cart”
+Se utiliza para agregar productos al carrito de compras, también verifica que el producto tenga existencia disponible antes de agregarlo.
+def add_to_cart(request, product_id)
+
+
+Vista “Remove_from_cart”
+Permite eliminar productos del carrito de compras de usuarios 
+def remove_from_cart(request, item_id)
+
+
+
+
+Vista” Update_cart_item”
+Se utiliza para modificar la cantidad de productos dentro del carrito. El sistema también verifica que no se agreguen más productos de los que ya existen.
+def update_cart_item(request, item_id)
+ 
+Vista “Checkout”
+Se utiliza para ver la forma de realizar el pago de cada cliente,si va a hacer en efectivo,transferencia o pago con tarjeta de crédito,dentro de esa función te pide el nombre,el número de tarjeta y el número en el que vence la tarjeta para que no haya errores.
+
+
+Vista de metodo de pago
+art, created = Cart.objects.get_or_create(user=request.user)
+verificación si el carrito no está vacío
+ if not cart.cartitem_set.exists():
+Datos para registrar el pago
+card_holder = form.cleaned_data.get('card_holder_name') if payment_method == 'CARD' else None
+
+
+Guardar los dígitos del pedido
+if card_last_digits:
+crear registro de pago
+este es uno de la linea de codigos para que sea funciona la forma de pagar.
+ Payment.objects.create(
+response_message="Pago simulado exitoso"
+ 
+vaciar carrito
+para verificar que ya se realizo tu compra y puedes seguir  nuevamente comprando después de hacer realizar tu pago.
+cart.cartitem_set.all().delete()
+messages.success(request, f"¡Compra realizada con éxito! Tu pedido #{order.id} ha sido confirmado.")
+def order_confirmation(request, order_id):
+
+
+vista confirmación de pedido
+def order_confirmation(request, order_id):
+función para saber que compraste en la pastelería,cuanto fue por cada uno y el total.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Urls:
+Son los encargados de que cada enlace dentro de la página lleve a cabo la función correcta, y que muestra la información adecuada al usuario dependiendo de la acción que haga. Están organizados de manera que sustentan las funciones principales del sistema.
+
+
+
+
+
+
+Página principal 
+Dirige a la persona a la página principal, del proyecto, donde muestra los productos que están disponibles con los filtros y buscador.
+    path('', views.home, name='home')
+
+
+
+
+Registro de usuarios
+Permite que nuevos usuarios puedan crear una cuenta desde la plataforma 
+    path('register/', views.register, name='register')
+
+
+Inicio de sesión
+Se utiliza para que los usuarios puedan iniciar sesión con su cuenta registrada
+    path('login/', views.login_view, name='login')
+
+
+Cierre de sesión
+Permite cerrar la sesión del usuario actual y regresa a la página principal
+    path('logout/', views.logout_view, name='logout')
+
+
+Dashboard
+Dirige al panel de administración a los vendedores, donde se pueden manipular los productos y ver estadísticas generales de estos 
+    path('dashboard/', views.dashboard, name='dashboard'),
+
+
+Crear productos
+Permite registrar nuevos productos dentro de la pastelería 
+    path('products/create/', views.product_create, name='product_create')
+
+Editar productos
+Permite modificar la información de un producto ya registrado en el sistema
+    path('products/<uuid:pk>/edit/', views.product_update, name='product_update')
+
+
+Eliminar productos
+Se utiliza para eliminar productos del sistema 
+    path('products/<uuid:pk>/delete/', views.product_delete, name='product_delete')
+
+
+
+
+
+
+Detalle de productos 
+Muestra toda la información detallada de un producto, incluyendo reseñas, ingredientes y productos relacionados
+    path('products/<uuid:pk>/', views.product_detail, name='product_detail')
+
+
+Carrito de compras
+Permite visualizar el contenido del carrito del usuario 
+    path('cart/', views.cart_detail, name='cart_detail')
+
+
+Agregar al carrito 
+Agrega un producto seleccionado al carrito de compras 
+    path('cart/add/<uuid:product_id>/', views.add_to_cart, name='add_to_cart')
+
+
+Eliminar del carrito 
+Permite eliminar un producto específico del carrito 
+    path('cart/remove/<uuid:item_id>/', views.remove_from_cart, name='remove_from_cart')
+
+
+Actualizar carrito
+Se utiliza para cambiar la cantidad de un producto dentro del carrito de compras 
+    path('cart/update/<uuid:item_id>/', views.update_cart_item, name='update_cart_item')
+
+Forma de pago
+se utiliza para saber de que forma va a pagar el cliente,en efectivo,con tarjeta ontransferencia.
+ path('checkout/', views.checkout, name='checkout'),
+path('order/<uuid:order_id>/', views.order_confirmation, name='order_confirmation')
+
+
+
+
+
+
+
+
+
+
+TIPO DE RELACIONES
+Dentro del proyecto se utilizaron distintos tipos de relaciones entre los modelos para lograr que la información del sistema se conecte correctamente, estas relaciones ayudan a organizar los datos de manera más eficaz y estructurada. Permiten que funciones como productos, reseñas, ingredientes y carrito de compras puedan actuar entre sí, dentro del programa.
+
+
+USER-PRODUCTO
+RELACIÓN UNO A MUCHOS
+
+owner = models.ForeignKey(
+    User,
+    on_delete=models.CASCADE,
+    related_name='products',
+    verbose_name="Vendedor"
+)
+
+
+UNSER - REVIEW
+RELACIÓN UNO A MUCHOS
+
+class Review(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name="Cliente"
     )
 
+
+
+
+
+USER - ORDER 
+RELACIÓN UNO A MUCHOS
+
+class Order(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name="Cliente"
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+PRODUCT - REVIEW
+RELACIÓN UNO A MUCHOS
+
+class Review(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name="Producto"
+    )
+
+
+
+
+
+
+
+CART - CARTLTEM
+RELACIÓN UNO A MUCHOS
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(
+        Cart,
+        on_delete=models.CASCADE,
+        verbose_name="Carrito"
+    )
+
+
+
+ORDER - ORDERLTEM
+RELACIÓN UNO A MUCHOS
+ 
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name="Pedido"
+    )
+
+
+
+
+
+
+
+Este tipo de relación se utiliza cuando un registro puede estar relacionado con varios registros de otra tabla, pero esos registros sólo pertenecen a uno específico. 
+En el proyecto se puede observar esta relación entre usuarios y reseñas, ya que un usuario puede realizar varias reseñas dentro de la página, pero cada reseña pertenece a un usuario. También se utiliza entre productos y reseñas, debido a que un producto puede tener varias opiniones hechas por distintos clientes.
+
+
+
+PRODUCT - CATEGORY
+RELACIÓN MUCHOS A MUCHOS
+
+class Product(models.Model):
     # Relación ManyToMany: Un producto puede estar en muchas categorías
     categories = models.ManyToManyField(
         Category,
         related_name='products',
         verbose_name="Categorías"
     )
-    
+
+PRODUCT - INGREDIENT
+RELACIÓN MUCHOS A MUCHOS 
+class Product(models.Model):
     # Relación ManyToMany: Un producto puede tener muchos ingredientes
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -142,257 +582,104 @@ class Product(models.Model):
         blank=True
     )
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
-
-    class Meta:
-        verbose_name_plural = "Productos"
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"{self.name} ({self.get_size_display()}) - {self.flavor}"
-    
-    @property
-    def average_rating(self):
-        """Calcula el promedio de calificaciones del producto"""
-        reviews = self.reviews.all()
-        if reviews.exists():
-            return round(reviews.aggregate(models.Avg('rating'))['rating__avg'], 1)
-        return 0
-    
-    @property
-    def allergens(self):
-        """Devuelve lista de ingredientes que son alérgenos"""
-        return self.ingredients.filter(is_allergen=True)
-    
-    @property
-    def is_in_stock(self):
-        """Verifica si hay stock disponible"""
-        return self.stock > 0 and self.is_available
-
-
-# =========================
-# ⭐ Reseña/Valoración
-# =========================
-class Review(models.Model):
-    """Reseñas y calificaciones de productos por parte de clientes"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(
-        Product, 
-        on_delete=models.CASCADE, 
-        related_name='reviews',
-        verbose_name="Producto"
-    )
-    user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='reviews',
-        verbose_name="Cliente"
-    )
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
-        verbose_name="Calificación",
-        help_text="Del 1 al 5"
-    )
-    comment = models.TextField(verbose_name="Comentario")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de reseña")
-    
-    class Meta:
-        verbose_name_plural = "Reseñas"
-        ordering = ['-created_at']
-        unique_together = ['product', 'user']
-    
-    def __str__(self):
-        return f"{'⭐' * self.rating} - {self.user.username} sobre {self.product.name}"
-
-
-# =========================
-# 🛒 Carrito
-# =========================
-class Cart(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='carts',
-        verbose_name="Usuario"
-    )
-    products = models.ManyToManyField(
-        Product,
-        through='CartItem',
-        related_name='carts'
-    )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
-
-    def __str__(self):
-        return f"Carrito de {self.user.username}"
-
-    @property
-    def total(self):
-        return sum(item.subtotal for item in self.cartitem_set.all())
-
-
-# =========================
-# 📦 CartItem
-# =========================
-class CartItem(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name="Carrito")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Producto")
-    quantity = models.PositiveIntegerField(default=1, verbose_name="Cantidad")
-
-    class Meta:
-        unique_together = ('cart', 'product')
-        verbose_name = "Artículo del carrito"
-        verbose_name_plural = "Artículos del carrito"
-
-    @property
-    def subtotal(self):
-        return self.product.price * self.quantity
-
-    def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
-
-
-# =========================
-# 🧾 Pedido / Orden de Compra
-# =========================
-class Order(models.Model):
-    PAYMENT_METHODS = [
-        ('CARD', 'Tarjeta de crédito/débito'),
-        ('PAYPAL', 'PayPal'),
-        ('TRANSFER', 'Transferencia bancaria'),
-        ('CASH', 'Efectivo (pago contra entrega)'),
-    ]
-    
-    STATUS_CHOICES = [
-        ('PENDING', 'Pendiente'),
-        ('PAID', 'Pagado'),
-        ('CANCELLED', 'Cancelado'),
-        ('COMPLETED', 'Completado'),
-    ]
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name="Cliente")
-    cart = models.OneToOneField(Cart, on_delete=models.SET_NULL, null=True, blank=True, related_name='order', verbose_name="Carrito asociado")
-    
-    # Datos del pedido
-    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Total")
-    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, verbose_name="Método de pago")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', verbose_name="Estado")
-    
-    # Datos de pago simulados (para historial)
-    card_last_digits = models.CharField(max_length=4, blank=True, null=True, verbose_name="Últimos 4 dígitos")
-    transaction_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID de transacción")
-    
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha del pedido")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
-    
-    class Meta:
-        verbose_name_plural = "Pedidos"
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"Pedido {self.id} - {self.user.username} - ${self.total}"
-    
-    @property
-    def get_items(self):
-        if self.cart:
-            return self.cart.cartitem_set.all()
-        return []
-
-
-# =========================
-# 📋 OrderItem (copia de seguridad)
-# =========================
-class OrderItem(models.Model):
-    """Item dentro de un pedido (copia de seguridad)"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name="Pedido")
-    product_name = models.CharField(max_length=200, verbose_name="Nombre del producto")
-    product_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio")
-    quantity = models.PositiveIntegerField(verbose_name="Cantidad")
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Subtotal")
-    
-    class Meta:
-        verbose_name_plural = "Items del pedido"
-    
-    def __str__(self):
-        return f"{self.quantity} x {self.product_name}"
-
-
-# =========================
-# 💳 Pago simulado
-# =========================
-class Payment(models.Model):
-    """Registro de pago simulado"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payment', verbose_name="Pedido")
-    
-    # Datos ficticios (no se almacenan datos reales sensibles)
-    card_holder_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Titular de la tarjeta")
-    payment_method = models.CharField(max_length=20, choices=Order.PAYMENT_METHODS, verbose_name="Método de pago")
-    
-    # Simulación
-    is_successful = models.BooleanField(default=True, verbose_name="¿Pago exitoso?")
-    transaction_id = models.CharField(max_length=100, unique=True, verbose_name="ID de transacción")
-    response_message = models.TextField(blank=True, verbose_name="Mensaje de respuesta")
-    
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha del pago")
-    
-    class Meta:
-        verbose_name_plural = "Pagos"
-    
-    def __str__(self):
-        return f"Pago {self.transaction_id} - ${self.order.total}"
+Esta relación se utiliza cuando varios registros pueden relacionarse entre sí al mismo tiempo.
+Dentro del proyecto se implementa entre productos e ingredientes, ya que un producto puede contener varios ingredientes y un mismo ingrediente puede utilizarse en distintos productos de la pastelería. Gracias a esto, la información se organiza de una manera más flexible y se evita repetir datos innecesarios dentro de la base de datos.
+Relación uno a uno La relación uno a uno se utiliza cuando un registro solamente puede estar relacionado con otro único registro.
 
 
 
 
-4 Admin de django
-pasteleria/admin.py
+DISEÑO DE LA BASE DE DATOS 
 
-# pasteleria/admin.py
+La base de datos del proyecto fue diseñada utilizando un modelo relacional, permitiendo organizar toda la información de manera estructurada y conectada entre sí. Este tipo de diseño ayuda a que los datos se almacenen de forma más ordenada dentro del sistema, facilitando el manejo de la información y evitando que existan datos repetidos o desorganizados.
+Dentro del proyecto se utilizaron diferentes modelos que representan las partes principales del funcionamiento de la pastelería. Entre ellos se encuentran usuarios, productos, categorías, ingredientes, reseñas y carrito de compras. Cada uno cumple una función específica dentro del sistema y permite que la aplicación funcione correctamente tanto para los clientes como para los administradores.
+Cada modelo contiene distintos campos que almacenan información importante. Por ejemplo, el modelo de productos guarda datos como el nombre, descripción, precio, imagen, sabor, tamaño y cantidad disponible. El modelo de usuarios almacena información básica de las personas registradas en la página, como nombre de usuario, correo y contraseña. También existen modelos como ingredientes y categorías, que ayudan a organizar mejor los productos y mostrar información más detallada al cliente.
+El sistema también incluye modelos relacionados con las compras y la interacción de los usuarios dentro de la página. El carrito de compras permite guardar los productos seleccionados antes de finalizar una compra, mientras que las reseñas permiten que los clientes puedan compartir opiniones y calificaciones sobre los productos de la pastelería.
+Toda esta estructura permite que la información esté mejor organizada y conectada dentro de la aplicación. Gracias a esto, el sistema puede realizar funciones como registrar usuarios, mostrar productos, administrar pedidos, guardar reseñas y controlar el carrito de compras de manera más eficiente.
+Además, el diseño de la base de datos está pensado para representar una situación real dentro de una tienda o pastelería en línea, donde existen usuarios que compran productos, productos que pertenecen a categorías y productos que contienen diferentes ingredientes. Esto ayuda a que el sistema sea más funcional y fácil de administrar.
+En general, el diseño de la base de datos es una de las partes más importantes del proyecto, ya que permite que toda la información del sistema se almacene correctamente y que cada parte de la aplicación pueda interactuar entre sí de manera adecuada.
+
+
+
+
+
+
+
+
+ADMINISTRACIÓN DEL SISTEMA
+Desde este apartado se pueden manejar los diferentes modelos del proyecto, como usuarios, productos, categorías, ingredientes, reseñas y carrito de compras. 
+A continuación se muestra el código completo del archivo admin.py del proyecto "Dulce Delirio", que es el responsable de que los administradores puedan gestionar toda la información de manera visual y lógica: 
+# pastelería/admin.py
 from django.contrib import admin
-from .models import User, Category, Product, Cart, CartItem, Ingredient, Review
+from .models import User, Category, Product, Cart, CartItem, Ingredient, Review, Order, Payment
 
+
+# ==================== ADMIN PARA USUARIOS ====================
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'is_seller')
-    list_filter = ('is_seller',)
+    list_display = ('username', 'email', 'is_seller')  # Columnas visibles
+    list_filter = ('is_seller',)                       # Filtros laterales
+    search_fields = ('username', 'email')              # Barra de búsqueda
 
+
+# ==================== ADMIN PARA CATEGORÍAS ====================
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+    search_fields = ('name',)
 
+
+# ==================== ADMIN PARA INGREDIENTES ====================
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_allergen', 'allergen_type')
     list_filter = ('is_allergen',)
     search_fields = ('name',)
 
+
+# ==================== ADMIN PARA PRODUCTOS (CRUD COMPLETO) ====================
 class ReviewInline(admin.TabularInline):
     model = Review
     extra = 0
     readonly_fields = ('created_at',)
 
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    # Columnas que se muestran en la lista
     list_display = ('name', 'price', 'stock', 'size', 'flavor', 'is_available', 'owner')
+   
+    # Filtros laterales para búsqueda rápida
     list_filter = ('categories', 'size', 'flavor', 'is_available')
+   
+    # Barra de búsqueda
     search_fields = ('name', 'flavor')
-    filter_horizontal = ('ingredients',)  # Mejor interfaz para ManyToMany
+   
+    # Para relaciones ManyToMany (interfaz mejorada)
+    filter_horizontal = ('ingredients',)
+   
+    # Mostrar reseñas dentro del producto
     inlines = [ReviewInline]
+   
+    # Campos que se muestran al editar
+    fields = ('name', 'description', 'image', 'price', 'stock',
+              'size', 'flavor', 'preparation_time', 'is_available',
+              'categories', 'ingredients', 'owner')
 
+
+# ==================== ADMIN PARA CARRITO ====================
 class CartItemInline(admin.TabularInline):
     model = CartItem
     extra = 1
+
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'created_at')
     inlines = [CartItemInline]
 
+
+# ==================== ADMIN PARA RESEÑAS ====================
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
@@ -400,2510 +687,150 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ('product__name', 'user__username', 'comment')
 
 
+# ==================== ADMIN PARA PEDIDOS ====================
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'total', 'payment_method', 'status', 'created_at')
+    list_filter = ('status', 'payment_method', 'created_at')
+    search_fields = ('user__username', 'id')
+    readonly_fields = ('created_at', 'updated_at')
 
 
-5 migraciones
-
-python manage.py makemigrations
-python manage.py migrate
 
 
-6 crear supero usuario
 
-python manage.py createsuperuser
-
-7 ejecuta servidor
-
-python manage.py runserver
-
-ir a 
-http://127.0.0.1:8000/admin/
-
-
-🚀 SPRINT 2 — Autenticación + UI Base
-
-URLs del proyecto 📁 config/urls.py
-
-from django.contrib import admin
-from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import path, include
-
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('pasteleria.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-URLs de la app 📁 crea el archivo urls.py en pasteleria/urls.py y agrega lo siguiente:
-# Pasteleria/urls.py
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.home, name='home'),
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'),
-
-    # Dashboard
-    path('dashboard/', views.dashboard, name='dashboard'),
-
-    # Productos CRUD
-    path('products/create/', views.product_create, name='product_create'),
-    path('products/<uuid:pk>/edit/', views.product_update, name='product_update'),
-    path('products/<uuid:pk>/delete/', views.product_delete, name='product_delete'),
-    path('products/<uuid:pk>/', views.product_detail, name='product_detail'),
-
-    # Cart
-    path('cart/', views.cart_detail, name='cart_detail'),
-    path('cart/add/<uuid:product_id>/', views.add_to_cart, name='add_to_cart'),
-    path('cart/remove/<uuid:item_id>/', views.remove_from_cart, name='remove_from_cart'),
-    path('cart/update/<uuid:item_id>/', views.update_cart_item, name='update_cart_item'),
-
-
-    # Checkout y pagos
-    path('checkout/', views.checkout, name='checkout'),
-    path('order/<uuid:order_id>/', views.order_confirmation, name='order_confirmation'),
-    path('my-orders/', views.my_orders, name='my_orders'),
-
-]
-
-
-Formularios 📁 creamos el archivo forms.py en pasteleria/forms.py:
-
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import User, Product, Review, Order
-
-class RegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Correo electrónico")
-    is_seller = forms.BooleanField(required=False, label="Registrarse como vendedor")
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'is_seller', 'password1', 'password2')
-        labels = {
-            'username': 'Nombre de usuario',
-        }
-
-class ProductForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = [
-            'name', 'description', 'image', 'price', 'stock', 
-            'size', 'flavor', 'preparation_time', 'is_available',
-            'categories', 'ingredients'
-        ]
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            'categories': forms.CheckboxSelectMultiple(),
-            'ingredients': forms.CheckboxSelectMultiple(),  # Selector múltiple para ingredientes
-        }
-        labels = {
-            'name': 'Nombre del Pastel',
-            'description': 'Descripción',
-            'image': 'Fotografía',
-            'price': 'Precio (MXN)',
-            'stock': 'Existencia',
-            'size': 'Tamaño',
-            'flavor': 'Sabor',
-            'preparation_time': 'Tiempo de preparación',
-            'is_available': '¿Producto disponible?',
-            'categories': 'Categorías',
-            'ingredients': 'Ingredientes',
-        }
-
-class ReviewForm(forms.ModelForm):
-    """Formulario para crear reseñas"""
-    class Meta:
-        model = Review
-        fields = ['rating', 'comment']
-        widgets = {
-            'rating': forms.Select(choices=[
-                (1, '⭐ - Malo'),
-                (2, '⭐⭐ - Regular'),
-                (3, '⭐⭐⭐ - Bueno'),
-                (4, '⭐⭐⭐⭐ - Muy bueno'),
-                (5, '⭐⭐⭐⭐⭐ - Excelente'),
-            ]),
-            'comment': forms.Textarea(attrs={
-                'rows': 4, 
-                'placeholder': 'Cuéntanos tu experiencia con este producto...'
-            }),
-        }
-        labels = {
-            'rating': 'Tu calificación',
-            'comment': 'Tu comentario',
-        }
-# =========================
-# Formulario de Pago (NUEVO)
-# =========================
-class PaymentForm(forms.Form):
-    payment_method = forms.ChoiceField(
-        choices=Order.PAYMENT_METHODS,
-        widget=forms.Select(attrs={'class': 'form-select'}),
-        label="Método de pago"
-    )
-    
-    # Campos para tarjeta (solo se muestran condicionalmente)
-    card_holder_name = forms.CharField(
-        max_length=100,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Como aparece en la tarjeta'}),
-        label="Nombre del titular"
-    )
-    card_number = forms.CharField(
-        max_length=19,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1234 5678 9012 3456'}),
-        label="Número de tarjeta"
-    )
-    card_expiry = forms.CharField(
-        max_length=5,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'MM/AA'}),
-        label="Fecha de expiración"
-    )
-    card_cvv = forms.CharField(
-        max_length=4,
-        required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '123'}),
-        label="CVV"
-    )
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        payment_method = cleaned_data.get('payment_method')
-        
-        if payment_method == 'CARD':
-            required_fields = ['card_holder_name', 'card_number', 'card_expiry', 'card_cvv']
-            for field in required_fields:
-                if not cleaned_data.get(field):
-                    self.add_error(field, 'Este campo es obligatorio para pagos con tarjeta.')
-        
-        # Validación simple de tarjeta (solo formato)
-        if payment_method == 'CARD' and cleaned_data.get('card_number'):
-            import re
-            card_num = re.sub(r'\D', '', cleaned_data['card_number'])
-            if len(card_num) < 13 or len(card_num) > 19:
-                self.add_error('card_number', 'Número de tarjeta inválido (debe tener entre 13 y 19 dígitos).')
-        
-        return cleaned_data
-
-
-Vistas 📁 pasteleria/views.py:
-
-# pasteleria/views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.core.paginator import Paginator
-from django.db.models import Q, Avg
-from django.http import HttpResponseForbidden
-from .forms import ProductForm, RegisterForm, ReviewForm, PaymentForm
-from .models import Product, Cart, CartItem, Category, Ingredient, Review, Order, OrderItem, Payment
-import uuid
-
-
-def home(request):
-    """Vista principal con buscador, filtros y paginación."""
-    query = request.GET.get('q')
-    category_id = request.GET.get('category')
-    size_filter = request.GET.get('size')
-    flavor_query = request.GET.get('flavor')
-    ingredient_filter = request.GET.get('ingredient')
-
-    products = Product.objects.select_related('owner').prefetch_related(
-        'categories', 'ingredients', 'reviews'
-    ).filter(is_available=True)
-
-    # Búsqueda por nombre o descripción
-    if query:
-        products = products.filter(
-            Q(name__icontains=query) |
-            Q(description__icontains=query) |
-            Q(flavor__icontains=query)
-        )
-
-    # Filtro por categoría
-    if category_id:
-        products = products.filter(categories__id=category_id)
-
-    # Filtro por tamaño
-    if size_filter:
-        products = products.filter(size=size_filter)
-
-    # Filtro por sabor
-    if flavor_query:
-        products = products.filter(flavor__icontains=flavor_query)
-
-    # Filtro por ingrediente
-    if ingredient_filter:
-        products = products.filter(ingredients__id=ingredient_filter)
-
-    # Paginación: 6 productos por página
-    paginator = Paginator(products, 6)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    categories = Category.objects.all()
-    size_choices = Product.SIZE_CHOICES
-    ingredients = Ingredient.objects.all().order_by('name')
-
-    context = {
-        'page_obj': page_obj,
-        'categories': categories,
-        'size_choices': size_choices,
-        'ingredients': ingredients,
-    }
-    return render(request, 'pasteleria/home.html', context)
-
-
-def register(request):
-    """Registro de nuevos usuarios."""
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, '¡Cuenta creada exitosamente! Bienvenido/a.')
-            return redirect('home')
-    else:
-        form = RegisterForm()
-    return render(request, 'pasteleria/register.html', {'form': form})
-
-
-def login_view(request):
-    """Inicio de sesión."""
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            messages.success(request, f'¡Bienvenido/a de nuevo, {user.username}!')
-            return redirect('dashboard' if user.is_seller else 'home')
-        else:
-            messages.error(request, 'Usuario o contraseña incorrectos.')
-    return render(request, 'pasteleria/login.html')
-
-
-def logout_view(request):
-    """Cierre de sesión."""
-    logout(request)
-    messages.info(request, 'Has cerrado sesión.')
-    return redirect('home')
-
-
-# =========================
-# 📊 Dashboard (Solo Vendedores)
-# =========================
-@login_required
-def dashboard(request):
-    """Panel de control para administradores/vendedores."""
-    if not request.user.is_seller:
-        return HttpResponseForbidden("No tienes permisos para acceder a esta página.")
-
-    products = Product.objects.filter(owner=request.user).prefetch_related('reviews', 'ingredients')
-    total_products = products.count()
-    total_reviews = Review.objects.filter(product__owner=request.user).count()
-    avg_rating = Review.objects.filter(product__owner=request.user).aggregate(
-        avg=Avg('rating')
-    )['avg'] or 0
-
-    context = {
-        'products': products,
-        'total_products': total_products,
-        'total_reviews': total_reviews,
-        'avg_rating': round(avg_rating, 1),
-    }
-    return render(request, 'pasteleria/dashboard.html', context)
-
-
-# =========================
-# 📝 CRUD de Productos
-# =========================
-@login_required
+]ENTRADA DE DATOS
 def product_create(request):
-    """Crear un nuevo producto."""
-    if not request.user.is_seller:
-        return HttpResponseForbidden("Solo los vendedores pueden crear productos.")
-
     form = ProductForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         product = form.save(commit=False)
         product.owner = request.user
         product.save()
-        form.save_m2m()
-        messages.success(request, f'¡{product.name} creado exitosamente!')
-        return redirect('dashboard')
-    return render(request, 'pasteleria/product_form.html', {'form': form, 'action': 'Crear'})
 
+La entrada de datos se realiza desde el panel de administración de Django, donde el administrador puede agregar nueva información al sistema. Por ejemplo, se pueden registrar nuevos productos, crear categorías, agregar ingredientes o incluso gestionar usuarios. Estos datos se almacenan automáticamente en la base de datos y quedan disponibles dentro de la aplicación.
 
-@login_required
-def product_update(request, pk):
-    """Editar un producto existente."""
+ELIMINACIÓN DE DATOS
+def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    if product.owner != request.user:
-        return HttpResponseForbidden("No puedes editar este producto.")
+    product.delete()
 
-    form = ProductForm(request.POST or None, request.FILES or None, instance=product)
+La eliminación de datos también se realiza desde el admin. El administrador puede eliminar registros que ya no sean necesarios o que ya no se utilicen en la página, como productos descontinuados, reseñas incorrectas o información que ya no sea relevante. Esto ayuda a mantener la base de datos organizada y actualizada.
+
+
+
+ACTUALIZACIÓN DE DATOS
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    form = ProductForm(request.POST or None, instance=product)
     if form.is_valid():
         form.save()
-        messages.success(request, f'¡{product.name} actualizado exitosamente!')
-        return redirect('dashboard')
-    return render(request, 'pasteleria/product_form.html', {'form': form, 'action': 'Editar'})
+La actualización de datos permite modificar información ya existente dentro del sistema. Por ejemplo, se puede cambiar el precio de un producto, actualizar su descripción, modificar la cantidad en stock o editar información de usuarios. Esto permite que la información siempre esté correcta dentro de la aplicación.
+    fields = ('name', 'description', 'image', 'price', 'stock',
+              'size', 'flavor', 'preparation_time', 'is_available',
+              'categories', 'ingredients', 'owner')
 
 
-@login_required
-def product_delete(request, pk):
-    """Eliminar un producto."""
-    product = get_object_or_404(Product, pk=pk)
-    if product.owner != request.user:
-        return HttpResponseForbidden("No puedes eliminar este producto.")
-
-    if request.method == 'POST':
-        product_name = product.name
-        product.delete()
-        messages.success(request, f'{product_name} ha sido eliminado.')
-        return redirect('dashboard')
-    return render(request, 'pasteleria/product_confirm_delete.html', {'product': product})
 
 
+
+
+
+
+
+
+
+
+FUNCIONAMIENTO DE LOS VIEWS Y SUS INTERACCIONES
+Los views son una parte fundamental del proyecto, ya que se encargan de la lógica de la aplicación. Su función principal es recibir las peticiones del usuario, obtener información de la base de datos mediante los modelos y enviar esos datos a las plantillas para ser mostrados en pantalla.
+
+VIEWS Y URLS
+path('products/create/', views.product_create, name='product_create')
+path('products/<uuid:pk>/edit/', views.product_update, name='product_update')
+path('products/<uuid:pk>/delete/', views.product_delete, name='product_delete')
+Los views trabajan directamente con las URLs, ya que cada URL está conectada a una vista específica. Esto permite que cuando el usuario ingresa a una dirección dentro del sitio web, se ejecute una función concreta que procesa la información correspondiente y determina qué contenido se debe mostrar.
+
+VIEWS Y TEMPLATES
 def product_detail(request, pk):
-    """Ver el detalle de un producto con reseñas."""
-    product = get_object_or_404(
-        Product.objects.prefetch_related('ingredients', 'reviews__user'),
-        pk=pk
-    )
+    product = get_object_or_404(Product, pk=pk)
     reviews = product.reviews.all()
-    user_review = None
-
-    # Si el usuario está autenticado y ya dejó una reseña, se la mostramos
-    if request.user.is_authenticated:
-        user_review = reviews.filter(user=request.user).first()
-
-    # Formulario para nueva reseña (solo si no ha dejado una)
-    review_form = None
-    if request.user.is_authenticated and not user_review:
-        if request.method == 'POST':
-            review_form = ReviewForm(request.POST)
-            if review_form.is_valid():
-                review = review_form.save(commit=False)
-                review.product = product
-                review.user = request.user
-                review.save()
-                messages.success(request, '¡Gracias por tu reseña!')
-                return redirect('product_detail', pk=product.id)
-        else:
-            review_form = ReviewForm()
-
-    # Productos relacionados (misma categoría)
-    related_products = Product.objects.filter(
-        categories__in=product.categories.all()
-    ).exclude(id=product.id).distinct()[:4]
-
-    context = {
+    return render(request, 'pasteleria/product_detail.html', {
         'product': product,
         'reviews': reviews,
-        'user_review': user_review,
-        'review_form': review_form,
-        'related_products': related_products,
-    }
-    return render(request, 'pasteleria/product_detail.html', context)
-
-
-# =========================
-# 🛒 Carrito de Compras
-# =========================
-@login_required
-def cart_detail(request):
-    """Ver el contenido del carrito."""
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    return render(request, 'pasteleria/cart_detail.html', {'cart': cart})
-
-
-@login_required
-def add_to_cart(request, product_id):
-    """Añadir un producto al carrito."""
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    product = get_object_or_404(Product, id=product_id)
-
-    if not product.is_in_stock:
-        messages.error(request, f'"{product.name}" no está disponible en este momento.')
-        return redirect('product_detail', pk=product_id)
-
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    if not created:
-        if cart_item.quantity < product.stock:
-            cart_item.quantity += 1
-            cart_item.save()
-            messages.success(request, f'Se agregó otra unidad de "{product.name}" al carrito.')
-        else:
-            messages.warning(request, 'No hay suficiente stock disponible.')
-    else:
-        messages.success(request, f'"{product.name}" agregado al carrito.')
-
-    return redirect('cart_detail')
-
-
-@login_required
-def remove_from_cart(request, item_id):
-    """Eliminar un artículo del carrito."""
-    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-    product_name = item.product.name
-    item.delete()
-    messages.success(request, f'"{product_name}" eliminado del carrito.')
-    return redirect('cart_detail')
-
-
-@login_required
-def update_cart_item(request, item_id):
-    """Actualizar la cantidad de un artículo en el carrito."""
-    item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-
-    if request.method == 'POST':
-        quantity = int(request.POST.get('quantity', 1))
-        if quantity > item.product.stock:
-            messages.warning(request, f'Solo hay {item.product.stock} unidades disponibles de "{item.product.name}".')
-            quantity = item.product.stock
-
-        if quantity > 0:
-            item.quantity = quantity
-            item.save()
-            messages.success(request, 'Cantidad actualizada.')
-        else:
-            item.delete()
-            messages.success(request, 'Producto eliminado del carrito.')
-
-    return redirect('cart_detail')
-
-
-# =========================
-# 💳 Sistema de Pagos (NUEVO)
-# =========================
-@login_required
-def checkout(request):
-    """Vista de checkout y selección de método de pago"""
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    
-    # Verificar que el carrito no esté vacío
-    if not cart.cartitem_set.exists():
-        messages.warning(request, "Tu carrito está vacío. Agrega productos antes de proceder al pago.")
-        return redirect('cart_detail')
-    
-    # Verificar stock disponible antes de procesar
-    for item in cart.cartitem_set.all():
-        if item.quantity > item.product.stock:
-            messages.error(request, f'No hay suficiente stock de "{item.product.name}". Disponible: {item.product.stock}')
-            return redirect('cart_detail')
-    
-    if request.method == 'POST':
-        form = PaymentForm(request.POST)
-        if form.is_valid():
-            payment_method = form.cleaned_data['payment_method']
-            total = cart.total
-            
-            # Crear el pedido SIN asignar el carrito para evitar UNIQUE constraint
-            order = Order.objects.create(
-                user=request.user,
-                cart=None,  # No asignamos carrito para evitar duplicados
-                total=total,
-                payment_method=payment_method,
-                status='PAID',
-                transaction_id=f"TXN-{uuid.uuid4().hex[:10].upper()}"
-            )
-            
-            # Guardar items del pedido como copia de seguridad
-            for item in cart.cartitem_set.all():
-                OrderItem.objects.create(
-                    order=order,
-                    product_name=item.product.name,
-                    product_price=item.product.price,
-                    quantity=item.quantity,
-                    subtotal=item.subtotal
-                )
-            
-            # Datos para el registro de pago
-            card_holder = form.cleaned_data.get('card_holder_name') if payment_method == 'CARD' else None
-            card_number_raw = form.cleaned_data.get('card_number', '')
-            card_last_digits = card_number_raw[-4:] if len(card_number_raw) >= 4 and payment_method == 'CARD' else None
-            
-            # Guardar últimos dígitos en el pedido
-            if card_last_digits:
-                order.card_last_digits = card_last_digits
-                order.save()
-            
-            # Crear registro de pago
-            Payment.objects.create(
-                order=order,
-                card_holder_name=card_holder,
-                payment_method=payment_method,
-                is_successful=True,
-                transaction_id=order.transaction_id,
-                response_message="Pago simulado exitoso"
-            )
-            
-            # DESCONTAR STOCK
-            for item in cart.cartitem_set.all():
-                product = item.product
-                product.stock -= item.quantity
-                product.save()
-            
-            # VACIAR CARRITO
-            cart.cartitem_set.all().delete()
-            
-            messages.success(request, f"¡Compra realizada con éxito! Tu pedido #{order.id} ha sido confirmado.")
-            return redirect('order_confirmation', order_id=order.id)
-        else:
-            messages.error(request, 'Por favor, completa correctamente los datos de pago.')
-    else:
-        form = PaymentForm(initial={'payment_method': 'CARD'})
-    
-    return render(request, 'pasteleria/checkout.html', {
-        'cart': cart,
-        'form': form
     })
+Los views también interactúan con los templates, ya que son los encargados de enviar la información que se mostrará en la interfaz del usuario. Los templates reciben estos datos y los presentan de forma visual, permitiendo mostrar productos, formularios, detalles de productos, carrito de compras y otras secciones de manera dinámica.
+INTEGRACIÓN DEL SISTEMA
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+En conjunto, la relación entre models, views, URLs y templates permite el correcto funcionamiento de la aplicación. Los modelos almacenan la información, los views la procesan, las URLs dirigen las solicitudes y los templates muestran la interfaz al usuario, logrando así un sistema completo, organizado y funcional.
 
 
-@login_required
-def order_confirmation(request, order_id):
-    """Vista de confirmación de pedido"""
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-    payment = order.payment if hasattr(order, 'payment') else None
-    
-    return render(request, 'pasteleria/order_confirmation.html', {
-        'order': order,
-        'payment': payment
-    })
-
-
-@login_required
-def my_orders(request):
-    """Lista de pedidos del usuario"""
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'pasteleria/my_orders.html', {
-        'orders': orders
-    })
-
-
-    Templates (Bootstrap 5.3) 📁 Creamos la carpeta templates y dentro la carpeta pasteleria agregamos los siguientes archivos de la Estructura:
-
-    templates/
- └── store/
-     ├── base.html
-     ├── cart_deatil.html
-     ├── checkout.html
-     └── dashboard.html
-     └── home.html
-     └── login.html
-     └── order_confirmation.html
-     └── product_confirm.html
-     └── product_detail.html
-     └── product_form.html
-     
-
-     🧩 base.html
-  <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Pastelería Dulce Delirio{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-    .navbar-brand { 
-        font-family: 'Georgia', serif; 
-        font-size: 1.8rem; 
-        color: #7beef7 !important; 
-    }
-    
-    .btn-pastel { 
-        background-color: #7ddcec; 
-        border-color: #7de9ec; 
-        color: white; 
-    }
-    
-    .btn-pastel:hover { 
-        background-color: #75e2f5; 
-        border-color: #73e7f0; 
-        color: white; 
-    }
-    
-    .btn-outline-pastel {
-        color: #75e3ff;
-        border-color: #77d0f3;
-    }
-    
-    .btn-outline-pastel:hover {
-        background-color: #7aedf5;
-        color: white;
-    }
-    
-    .bg-pastel {
-        background-color: #75edf1 !important;
-    }
-    
-    .card:hover { 
-        transform: translateY(-5px); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1); 
-        transition: all 0.3s ease; 
-    }
-    
-    .text-pastel {
-        color: #686acc !important;
-    }
-    
-    .alert-pastel {
-        background-color: #ebc6f0;
-        border-color: #f1b8f0;
-        color: #dfa4eb;
-    }
-</style>
-    {% block extra_head %}{% endblock %}
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="bi bi-cake2-fill"></i> Dulce Delirio
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a href="{% url 'cart_detail' %}" class="btn btn-outline-secondary btn-sm me-2 position-relative">
-                                <i class="bi bi-cart3"></i> Carrito
-                            </a>
-                        </li>
-                        {% if user.is_seller %}
-                        <li class="nav-item">
-                            <a href="{% url 'dashboard' %}" class="btn btn-outline-warning btn-sm me-2">Dashboard</a>
-                        </li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <span class="navbar-text me-3">Hola, {{ user.username }}!</span>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Salir</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a href="{% url 'login' %}" class="btn btn-outline-secondary btn-sm me-2">Ingresar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'register' %}" class="btn btn-pastel btn-sm">Registrarse</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container py-4">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        {% block content %}{% endblock %}
-    </main>
-
-    <footer class="bg-light text-center text-muted py-4 mt-5 border-top">
-        <div class="container">
-            <p class="mb-0">© 2026 Pastelería Dulce Delirio. Hecho con <i class="bi bi-heart-fill text-danger"></i> y Django.</p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
-</body>
-</html>
-
-
-
-
-
-cart_detail.html
-
-{% extends 'pasteleria/base.html' %}
-{% block title %}Mi Carrito - Pastelería{% endblock %}
-
-{% block content %}
-<h2 class="mb-4"><i class="bi bi-cart3"></i> Mi Carrito</h2>
-
-{% if cart.cartitem_set.all %}
-<div class="table-responsive">
-    <table class="table table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart.cartitem_set.all %}
-            <tr>
-                <td class="align-middle">
-                    <div class="d-flex align-items-center">
-                        {% if item.product.image %}
-                            <img src="{{ item.product.image.url }}" width="50" height="50" class="rounded me-2" style="object-fit: cover;">
-                        {% endif %}
-                        <div>
-                            <strong>{{ item.product.name }}</strong><br>
-                            <small class="text-muted">{{ item.product.flavor }} | {{ item.product.get_size_display }}</small>
-                        </div>
-                    </div>
-                </td>
-                <td class="align-middle">${{ item.product.price }}</td>
-                <td class="align-middle">
-                    <form method="POST" action="{% url 'update_cart_item' item.id %}" class="input-group input-group-sm" style="width: 130px;">
-                        {% csrf_token %}
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center">
-                        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-arrow-clockwise"></i></button>
-                    </form>
-                </td>
-                <td class="align-middle fw-bold">${{ item.subtotal }}</td>
-                <td class="align-middle">
-                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-outline-danger btn-sm">
-                        <i class="bi bi-trash3"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot class="table-group-divider">
-            <tr>
-                <td colspan="3" class="text-end fw-bold fs-5">Total:</td>
-                <td colspan="2" class="fw-bold fs-5 text-success">${{ cart.total }}</td>
-            </tr>
-        </tfoot>
-    </table>
-</div>
-
-<div class="text-end mt-3">
-    <a href="{% url 'home' %}" class="btn btn-outline-secondary me-2">
-        <i class="bi bi-arrow-left"></i> Seguir Comprando
-    </a>
-    <a href="{% url 'checkout' %}" class="btn btn-pastel btn-lg">
-        <i class="bi bi-credit-card"></i> Proceder al Pago
-    </a>
-</div>
-
-{% else %}
-<div class="alert alert-info text-center py-5">
-    <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
-    Tu carrito está vacío. 
-    <a href="{% url 'home' %}" class="alert-link">¡Ve a comprar algo dulce!</a>
-</div>
-{% endif %}
-{% endblock %}
-
-
-
-checkout.html
-
-
-
-{% extends 'pasteleria/base.html' %}
-{% block title %}Mi Carrito - Pastelería{% endblock %}
-
-{% block content %}
-<h2 class="mb-4"><i class="bi bi-cart3"></i> Mi Carrito</h2>
-
-{% if cart.cartitem_set.all %}
-<div class="table-responsive">
-    <table class="table table-hover align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Cantidad</th>
-                <th>Subtotal</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart.cartitem_set.all %}
-            <tr>
-                <td class="align-middle">
-                    <div class="d-flex align-items-center">
-                        {% if item.product.image %}
-                            <img src="{{ item.product.image.url }}" width="50" height="50" class="rounded me-2" style="object-fit: cover;">
-                        {% endif %}
-                        <div>
-                            <strong>{{ item.product.name }}</strong><br>
-                            <small class="text-muted">{{ item.product.flavor }} | {{ item.product.get_size_display }}</small>
-                        </div>
-                    </div>
-                </td>
-                <td class="align-middle">${{ item.product.price }}</td>
-                <td class="align-middle">
-                    <form method="POST" action="{% url 'update_cart_item' item.id %}" class="input-group input-group-sm" style="width: 130px;">
-                        {% csrf_token %}
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control text-center">
-                        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-arrow-clockwise"></i></button>
-                    </form>
-                </td>
-                <td class="align-middle fw-bold">${{ item.subtotal }}</td>
-                <td class="align-middle">
-                    <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-outline-danger btn-sm">
-                        <i class="bi bi-trash3"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot class="table-group-divider">
-            <tr>
-                <td colspan="3" class="text-end fw-bold fs-5">Total:</td>
-                <td colspan="2" class="fw-bold fs-5 text-success">${{ cart.total }}</td>
-            </tr>
-        </tfoot>
-    </table>
-</div>
-
-<div class="text-end mt-3">
-    <a href="{% url 'home' %}" class="btn btn-outline-secondary me-2">
-        <i class="bi bi-arrow-left"></i> Seguir Comprando
-    </a>
-    <a href="{% url 'checkout' %}" class="btn btn-pastel btn-lg">
-        <i class="bi bi-credit-card"></i> Proceder al Pago
-    </a>
-</div>
-
-{% else %}
-<div class="alert alert-info text-center py-5">
-    <i class="bi bi-cart-x fs-1 d-block mb-3"></i>
-    Tu carrito está vacío. 
-    <a href="{% url 'home' %}" class="alert-link">¡Ve a comprar algo dulce!</a>
-</div>
-{% endif %}
-{% endblock %}
-
-
-
-
-dashboard.html
-
-
-{% extends 'pasteleria/base.html' %}
-{% block title %}Dashboard - Pastelería{% endblock %}
-
-{% block content %}
-<!-- Estadísticas -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="card-title">Total Productos</h6>
-                        <h2>{{ total_products }}</h2>
-                    </div>
-                    <i class="bi bi-box-seam fs-1"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="card-title">Total Reseñas</h6>
-                        <h2>{{ total_reviews }}</h2>
-                    </div>
-                    <i class="bi bi-star-fill fs-1"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-warning text-dark shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h6 class="card-title">Calificación Promedio</h6>
-                        <h2>{{ avg_rating }} ⭐</h2>
-                    </div>
-                    <i class="bi bi-graph-up fs-1"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-speedometer2"></i> Mis Productos</h2>
-    <a href="{% url 'product_create' %}" class="btn btn-pastel">
-        <i class="bi bi-plus-circle"></i> Nuevo Pastel
-    </a>
-</div>
-
-<div class="card shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 80px;">Imagen</th>
-                        <th>Nombre</th>
-                        <th>Sabor</th>
-                        <th>Tamaño</th>
-                        <th>Ingredientes</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th>Reseñas</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for product in products %}
-                    <tr>
-                        <td>
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
-                            {% else %}
-                                <div class="bg-light d-flex align-items-center justify-content-center border rounded" style="width: 60px; height: 60px;">
-                                    <small>N/A</small>
-                                </div>
-                            {% endif %}
-                        </td>
-                        <td class="fw-bold">{{ product.name }}</td>
-                        <td>{{ product.flavor }}</td>
-                        <td>{{ product.get_size_display }}</td>
-                        <td>
-                            <small class="text-muted">{{ product.ingredients.count }} ingredientes</small>
-                        </td>
-                        <td>${{ product.price }}</td>
-                        <td>
-                            <span class="badge {% if product.is_in_stock %}bg-success{% else %}bg-danger{% endif %}">
-                                {{ product.stock }} u.
-                            </span>
-                        </td>
-                        <td>
-                            <span class="text-warning">
-                                {{ product.average_rating }} ⭐
-                            </span>
-                            <br>
-                            <small class="text-muted">({{ product.reviews.count }})</small>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-info btn-sm" title="Ver">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="{% url 'product_update' product.id %}" class="btn btn-outline-warning btn-sm" title="Editar">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <a href="{% url 'product_delete' product.id %}" class="btn btn-outline-danger btn-sm" title="Eliminar">
-                                <i class="bi bi-trash3"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="9" class="text-center py-4 text-muted">
-                            <i class="bi bi-cup-hot fs-1 d-block"></i>
-                            Aún no has creado ningún pastel. 
-                            <a href="{% url 'product_create' %}" class="btn btn-pastel btn-sm mt-2">Crear mi primer pastel</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-
-
-
-home.html
-
-{% extends 'pasteleria/base.html' %}
-{% load static %}
-
-{% block title %}Inicio - Pastelería Dulce Delirio{% endblock %}
-
-{% block content %}
-
-<div class="container py-4">
-
-    <!-- Título -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Pastelería Dulce Delirio</h1>
-        <p class="text-muted">
-           "Dulzura"
-        </p>
-    </div>
-
-    <!-- Filtros -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">
-                        Buscar Pasteles
-                    </h5>
-                </div>
-
-                <div class="card-body">
-
-                    <form method="GET" class="row g-3">
-
-                        <!-- Buscar -->
-                        <div class="col-md-3">
-                            <label class="form-label">Buscar</label>
-
-                            <input
-                                type="text"
-                                name="q"
-                                class="form-control"
-                                placeholder="Nombre del pastel..."
-                                value="{{ request.GET.q }}"
-                            >
-                        </div>
-
-                        <!-- Categoría -->
-                        <div class="col-md-2">
-                            <label class="form-label">Categoría</label>
-
-                            <select name="category" class="form-select">
-
-                                <option value="">Todas</option>
-
-                                {% for category in categories %}
-                                    <option
-                                        value="{{ category.id }}"
-                                        {% if request.GET.category == category.id|stringformat:"s" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ category.name }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Tamaño -->
-                        <div class="col-md-2">
-                            <label class="form-label">Tamaño</label>
-
-                            <select name="size" class="form-select">
-
-                                <option value="">Todos</option>
-
-                                {% for key, value in size_choices %}
-                                    <option
-                                        value="{{ key }}"
-                                        {% if request.GET.size == key %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ value }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Sabor -->
-                        <div class="col-md-2">
-                            <label class="form-label">Sabor</label>
-
-                            <input
-                                type="text"
-                                name="flavor"
-                                class="form-control"
-                                placeholder="Chocolate..."
-                                value="{{ request.GET.flavor }}"
-                            >
-                        </div>
-
-                        <!-- Ingrediente -->
-                        <div class="col-md-2">
-                            <label class="form-label">Ingrediente</label>
-
-                            <select name="ingredient" class="form-select">
-
-                                <option value="">Todos</option>
-
-                                {% for ingredient in ingredients %}
-                                    <option
-                                        value="{{ ingredient.id }}"
-                                        {% if request.GET.ingredient == ingredient.id|stringformat:"s" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ ingredient.name }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Botón -->
-                        <div class="col-md-1 d-grid">
-                            <label class="form-label">&nbsp;</label>
-
-                            <button class="btn btn-dark">
-                                Buscar
-                            </button>
-                        </div>
-
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Productos -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-
-        {% for product in page_obj %}
-
-        <div class="col">
-
-            <div class="card h-100 shadow-sm border-0">
-
-                <!-- Imagen -->
-                {% if product.image %}
-                    <img
-                        src="{{ product.image.url }}"
-                        class="card-img-top"
-                        alt="{{ product.name }}"
-                        style="height: 250px; object-fit: cover;"
-                    >
-                {% else %}
-                    <div class="bg-light d-flex align-items-center justify-content-center"
-                         style="height:250px;">
-                        Sin imagen
-                    </div>
-                {% endif %}
-
-                <!-- Body -->
-                <div class="card-body d-flex flex-column">
-
-                    <!-- Categorías -->
-                    <div class="mb-2">
-                        {% for cat in product.categories.all %}
-                            <span class="badge bg-secondary">
-                                {{ cat.name }}
-                            </span>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Nombre -->
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
-
-                    <!-- Descripción -->
-                    <p class="card-text text-muted flex-grow-1">
-                        {{ product.description|truncatechars:80 }}
-                    </p>
-
-                    <!-- Tamaño y sabor -->
-                    <div class="mb-3">
-
-                        <span class="badge bg-info text-dark">
-                            {{ product.get_size_display }}
-                        </span>
-
-                        <span class="badge bg-warning text-dark">
-                            {{ product.flavor }}
-                        </span>
-
-                    </div>
-
-                    <!-- Ingredientes -->
-                    {% if product.ingredients.all %}
-
-                    <div class="mb-3">
-
-                        <small class="text-muted">
-                            Ingredientes:
-                        </small>
-
-                        <br>
-
-                        {% for ingredient in product.ingredients.all|slice:":3" %}
-                            <span class="badge bg-light text-dark border">
-                                {{ ingredient.name }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                    {% endif %}
-
-                    <!-- Precio -->
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-
-                        <span class="fw-bold fs-4 text-success">
-                            ${{ product.price }}
-                        </span>
-
-                        <small class="text-muted">
-                            Stock: {{ product.stock }}
-                        </small>
-
-                    </div>
-
-                </div>
-
-                <!-- Footer -->
-                <div class="card-footer bg-white border-0">
-
-                    <div class="d-grid gap-2">
-
-                        <a
-                            href="{% url 'product_detail' product.id %}"
-                            class="btn btn-outline-dark btn-sm"
-                        >
-                            Ver detalle
-                        </a>
-
-                        {% if user.is_authenticated %}
-
-                            <a
-                                href="{% url 'add_to_cart' product.id %}"
-                                class="btn btn-dark btn-sm"
-                            >
-                                Agregar al carrito
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div class="col-12 text-center py-5">
-
-            <h4>
-                No hay productos disponibles
-            </h4>
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    <!-- Paginación -->
-    {% if page_obj.has_other_pages %}
-
-    <nav class="mt-5">
-
-        <ul class="pagination justify-content-center">
-
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_obj.previous_page_number }}">
-                        Anterior
-                    </a>
-                </li>
-            {% endif %}
-
-            <li class="page-item active">
-                <span class="page-link">
-                    {{ page_obj.number }}
-                </span>
-            </li>
-
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_obj.next_page_number }}">
-                        Siguiente
-                    </a>
-                </li>
-            {% endif %}
-
-        </ul>
-
-    </nav>
-
-    {% endif %}
-
-</div>
-
-{% endblock %}
-
-
-
-login.html
-
-
-{% extends 'pasteleria/base.html' %}
-{% load static %}
-
-{% block title %}Inicio - Pastelería Dulce Delirio{% endblock %}
-
-{% block content %}
-
-<div class="container py-4">
-
-    <!-- Título -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Pastelería Dulce Delirio</h1>
-        <p class="text-muted">
-           "Dulzura"
-        </p>
-    </div>
-
-    <!-- Filtros -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">
-                        Buscar Pasteles
-                    </h5>
-                </div>
-
-                <div class="card-body">
-
-                    <form method="GET" class="row g-3">
-
-                        <!-- Buscar -->
-                        <div class="col-md-3">
-                            <label class="form-label">Buscar</label>
-
-                            <input
-                                type="text"
-                                name="q"
-                                class="form-control"
-                                placeholder="Nombre del pastel..."
-                                value="{{ request.GET.q }}"
-                            >
-                        </div>
-
-                        <!-- Categoría -->
-                        <div class="col-md-2">
-                            <label class="form-label">Categoría</label>
-
-                            <select name="category" class="form-select">
-
-                                <option value="">Todas</option>
-
-                                {% for category in categories %}
-                                    <option
-                                        value="{{ category.id }}"
-                                        {% if request.GET.category == category.id|stringformat:"s" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ category.name }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Tamaño -->
-                        <div class="col-md-2">
-                            <label class="form-label">Tamaño</label>
-
-                            <select name="size" class="form-select">
-
-                                <option value="">Todos</option>
-
-                                {% for key, value in size_choices %}
-                                    <option
-                                        value="{{ key }}"
-                                        {% if request.GET.size == key %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ value }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Sabor -->
-                        <div class="col-md-2">
-                            <label class="form-label">Sabor</label>
-
-                            <input
-                                type="text"
-                                name="flavor"
-                                class="form-control"
-                                placeholder="Chocolate..."
-                                value="{{ request.GET.flavor }}"
-                            >
-                        </div>
-
-                        <!-- Ingrediente -->
-                        <div class="col-md-2">
-                            <label class="form-label">Ingrediente</label>
-
-                            <select name="ingredient" class="form-select">
-
-                                <option value="">Todos</option>
-
-                                {% for ingredient in ingredients %}
-                                    <option
-                                        value="{{ ingredient.id }}"
-                                        {% if request.GET.ingredient == ingredient.id|stringformat:"s" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ ingredient.name }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Botón -->
-                        <div class="col-md-1 d-grid">
-                            <label class="form-label">&nbsp;</label>
-
-                            <button class="btn btn-dark">
-                                Buscar
-                            </button>
-                        </div>
-
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Productos -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-
-        {% for product in page_obj %}
-
-        <div class="col">
-
-            <div class="card h-100 shadow-sm border-0">
-
-                <!-- Imagen -->
-                {% if product.image %}
-                    <img
-                        src="{{ product.image.url }}"
-                        class="card-img-top"
-                        alt="{{ product.name }}"
-                        style="height: 250px; object-fit: cover;"
-                    >
-                {% else %}
-                    <div class="bg-light d-flex align-items-center justify-content-center"
-                         style="height:250px;">
-                        Sin imagen
-                    </div>
-                {% endif %}
-
-                <!-- Body -->
-                <div class="card-body d-flex flex-column">
-
-                    <!-- Categorías -->
-                    <div class="mb-2">
-                        {% for cat in product.categories.all %}
-                            <span class="badge bg-secondary">
-                                {{ cat.name }}
-                            </span>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Nombre -->
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
-
-                    <!-- Descripción -->
-                    <p class="card-text text-muted flex-grow-1">
-                        {{ product.description|truncatechars:80 }}
-                    </p>
-
-                    <!-- Tamaño y sabor -->
-                    <div class="mb-3">
-
-                        <span class="badge bg-info text-dark">
-                            {{ product.get_size_display }}
-                        </span>
-
-                        <span class="badge bg-warning text-dark">
-                            {{ product.flavor }}
-                        </span>
-
-                    </div>
-
-                    <!-- Ingredientes -->
-                    {% if product.ingredients.all %}
-
-                    <div class="mb-3">
-
-                        <small class="text-muted">
-                            Ingredientes:
-                        </small>
-
-                        <br>
-
-                        {% for ingredient in product.ingredients.all|slice:":3" %}
-                            <span class="badge bg-light text-dark border">
-                                {{ ingredient.name }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                    {% endif %}
-
-                    <!-- Precio -->
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-
-                        <span class="fw-bold fs-4 text-success">
-                            ${{ product.price }}
-                        </span>
-
-                        <small class="text-muted">
-                            Stock: {{ product.stock }}
-                        </small>
-
-                    </div>
-
-                </div>
-
-                <!-- Footer -->
-                <div class="card-footer bg-white border-0">
-
-                    <div class="d-grid gap-2">
-
-                        <a
-                            href="{% url 'product_detail' product.id %}"
-                            class="btn btn-outline-dark btn-sm"
-                        >
-                            Ver detalle
-                        </a>
-
-                        {% if user.is_authenticated %}
-
-                            <a
-                                href="{% url 'add_to_cart' product.id %}"
-                                class="btn btn-dark btn-sm"
-                            >
-                                Agregar al carrito
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div class="col-12 text-center py-5">
-
-            <h4>
-                No hay productos disponibles
-            </h4>
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    <!-- Paginación -->
-    {% if page_obj.has_other_pages %}
-
-    <nav class="mt-5">
-
-        <ul class="pagination justify-content-center">
-
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_obj.previous_page_number }}">
-                        Anterior
-                    </a>
-                </li>
-            {% endif %}
-
-            <li class="page-item active">
-                <span class="page-link">
-                    {{ page_obj.number }}
-                </span>
-            </li>
-
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_obj.next_page_number }}">
-                        Siguiente
-                    </a>
-                </li>
-            {% endif %}
-
-        </ul>
-
-    </nav>
-
-    {% endif %}
-
-</div>
-
-{% endblock %}
-
-
-
-my_orders.html
-
-
-{% extends 'pasteleria/base.html' %}
-{% load static %}
-
-{% block title %}Inicio - Pastelería Dulce Delirio{% endblock %}
-
-{% block content %}
-
-<div class="container py-4">
-
-    <!-- Título -->
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Pastelería Dulce Delirio</h1>
-        <p class="text-muted">
-           "Dulzura"
-        </p>
-    </div>
-
-    <!-- Filtros -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">
-                        Buscar Pasteles
-                    </h5>
-                </div>
-
-                <div class="card-body">
-
-                    <form method="GET" class="row g-3">
-
-                        <!-- Buscar -->
-                        <div class="col-md-3">
-                            <label class="form-label">Buscar</label>
-
-                            <input
-                                type="text"
-                                name="q"
-                                class="form-control"
-                                placeholder="Nombre del pastel..."
-                                value="{{ request.GET.q }}"
-                            >
-                        </div>
-
-                        <!-- Categoría -->
-                        <div class="col-md-2">
-                            <label class="form-label">Categoría</label>
-
-                            <select name="category" class="form-select">
-
-                                <option value="">Todas</option>
-
-                                {% for category in categories %}
-                                    <option
-                                        value="{{ category.id }}"
-                                        {% if request.GET.category == category.id|stringformat:"s" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ category.name }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Tamaño -->
-                        <div class="col-md-2">
-                            <label class="form-label">Tamaño</label>
-
-                            <select name="size" class="form-select">
-
-                                <option value="">Todos</option>
-
-                                {% for key, value in size_choices %}
-                                    <option
-                                        value="{{ key }}"
-                                        {% if request.GET.size == key %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ value }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Sabor -->
-                        <div class="col-md-2">
-                            <label class="form-label">Sabor</label>
-
-                            <input
-                                type="text"
-                                name="flavor"
-                                class="form-control"
-                                placeholder="Chocolate..."
-                                value="{{ request.GET.flavor }}"
-                            >
-                        </div>
-
-                        <!-- Ingrediente -->
-                        <div class="col-md-2">
-                            <label class="form-label">Ingrediente</label>
-
-                            <select name="ingredient" class="form-select">
-
-                                <option value="">Todos</option>
-
-                                {% for ingredient in ingredients %}
-                                    <option
-                                        value="{{ ingredient.id }}"
-                                        {% if request.GET.ingredient == ingredient.id|stringformat:"s" %}
-                                            selected
-                                        {% endif %}
-                                    >
-                                        {{ ingredient.name }}
-                                    </option>
-                                {% endfor %}
-
-                            </select>
-                        </div>
-
-                        <!-- Botón -->
-                        <div class="col-md-1 d-grid">
-                            <label class="form-label">&nbsp;</label>
-
-                            <button class="btn btn-dark">
-                                Buscar
-                            </button>
-                        </div>
-
-                    </form>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Productos -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-
-        {% for product in page_obj %}
-
-        <div class="col">
-
-            <div class="card h-100 shadow-sm border-0">
-
-                <!-- Imagen -->
-                {% if product.image %}
-                    <img
-                        src="{{ product.image.url }}"
-                        class="card-img-top"
-                        alt="{{ product.name }}"
-                        style="height: 250px; object-fit: cover;"
-                    >
-                {% else %}
-                    <div class="bg-light d-flex align-items-center justify-content-center"
-                         style="height:250px;">
-                        Sin imagen
-                    </div>
-                {% endif %}
-
-                <!-- Body -->
-                <div class="card-body d-flex flex-column">
-
-                    <!-- Categorías -->
-                    <div class="mb-2">
-                        {% for cat in product.categories.all %}
-                            <span class="badge bg-secondary">
-                                {{ cat.name }}
-                            </span>
-                        {% endfor %}
-                    </div>
-
-                    <!-- Nombre -->
-                    <h5 class="card-title">
-                        {{ product.name }}
-                    </h5>
-
-                    <!-- Descripción -->
-                    <p class="card-text text-muted flex-grow-1">
-                        {{ product.description|truncatechars:80 }}
-                    </p>
-
-                    <!-- Tamaño y sabor -->
-                    <div class="mb-3">
-
-                        <span class="badge bg-info text-dark">
-                            {{ product.get_size_display }}
-                        </span>
-
-                        <span class="badge bg-warning text-dark">
-                            {{ product.flavor }}
-                        </span>
-
-                    </div>
-
-                    <!-- Ingredientes -->
-                    {% if product.ingredients.all %}
-
-                    <div class="mb-3">
-
-                        <small class="text-muted">
-                            Ingredientes:
-                        </small>
-
-                        <br>
-
-                        {% for ingredient in product.ingredients.all|slice:":3" %}
-                            <span class="badge bg-light text-dark border">
-                                {{ ingredient.name }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                    {% endif %}
-
-                    <!-- Precio -->
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-
-                        <span class="fw-bold fs-4 text-success">
-                            ${{ product.price }}
-                        </span>
-
-                        <small class="text-muted">
-                            Stock: {{ product.stock }}
-                        </small>
-
-                    </div>
-
-                </div>
-
-                <!-- Footer -->
-                <div class="card-footer bg-white border-0">
-
-                    <div class="d-grid gap-2">
-
-                        <a
-                            href="{% url 'product_detail' product.id %}"
-                            class="btn btn-outline-dark btn-sm"
-                        >
-                            Ver detalle
-                        </a>
-
-                        {% if user.is_authenticated %}
-
-                            <a
-                                href="{% url 'add_to_cart' product.id %}"
-                                class="btn btn-dark btn-sm"
-                            >
-                                Agregar al carrito
-                            </a>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        {% empty %}
-
-        <div class="col-12 text-center py-5">
-
-            <h4>
-                No hay productos disponibles
-            </h4>
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    <!-- Paginación -->
-    {% if page_obj.has_other_pages %}
-
-    <nav class="mt-5">
-
-        <ul class="pagination justify-content-center">
-
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_obj.previous_page_number }}">
-                        Anterior
-                    </a>
-                </li>
-            {% endif %}
-
-            <li class="page-item active">
-                <span class="page-link">
-                    {{ page_obj.number }}
-                </span>
-            </li>
-
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link"
-                       href="?page={{ page_obj.next_page_number }}">
-                        Siguiente
-                    </a>
-                </li>
-            {% endif %}
-
-        </ul>
-
-    </nav>
-
-    {% endif %}
-
-</div>
-
-{% endblock %}
-
-
-
-order_confirmation.html
-
-
-{% extends 'pasteleria/base.html' %}
-{% load static %}
-
-{% block title %}Pedido Confirmado - Dulce Delirio{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-lg border-0 text-center">
-            <div class="card-body p-5">
-                <!-- Icono de éxito -->
-                <div class="mb-4">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-                </div>
-                
-                <h1 class="display-5 fw-bold mb-3">¡Compra Realizada!</h1>
-                <p class="lead mb-4">Tu pedido ha sido confirmado exitosamente.</p>
-                
-                <div class="alert alert-pastel mb-4">
-                    <i class="bi bi-envelope"></i> 
-                    Te hemos enviado un correo con los detalles de tu compra.
-                </div>
-                
-                <!-- Detalles del pedido -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Detalles del Pedido</h5>
-                    </div>
-                    <div class="card-body text-start">
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Número de pedido:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.id }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Fecha:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.created_at|date:"d/m/Y H:i" }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Total:</strong>
-                            </div>
-                            <div class="col-6 text-success fw-bold fs-5">
-                                ${{ order.total }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Método de pago:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.get_payment_method_display }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <strong>Estado:</strong>
-                            </div>
-                            <div class="col-6">
-                                <span class="badge bg-success">Pagado</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Productos comprados -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Productos</h5>
-                    </div>
-                    <div class="card-body">
-                        {% for item in order.items.all %}
-                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                            <div>
-                                <strong>{{ item.product_name }}</strong>
-                                <br>
-                                <small class="text-muted">Cantidad: {{ item.quantity }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="fw-bold">${{ item.subtotal }}</span>
-                                <br>
-                                <small class="text-muted">${{ item.product_price }} c/u</small>
-                            </div>
-                        </div>
-                        {% empty %}
-                            {% for item in order.get_items %}
-                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                                <div>
-                                    <strong>{{ item.product.name }}</strong>
-                                    <br>
-                                    <small class="text-muted">Cantidad: {{ item.quantity }}</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="fw-bold">${{ item.subtotal }}</span>
-                                    <br>
-                                    <small class="text-muted">${{ item.product.price }} c/u</small>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Botones de acción -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <a href="{% url 'home' %}" class="btn btn-pastel btn-lg">
-                        <i class="bi bi-house"></i> Seguir Comprando
-                    </a>
-                    <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary btn-lg">
-                        <i class="bi bi-receipt"></i> Ver Mis Pedidos
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-
-
-
-product_confirm_delete.html
-
-
-
-{% extends 'pasteleria/base.html' %}
-{% load static %}
-
-{% block title %}Pedido Confirmado - Dulce Delirio{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-lg border-0 text-center">
-            <div class="card-body p-5">
-                <!-- Icono de éxito -->
-                <div class="mb-4">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-                </div>
-                
-                <h1 class="display-5 fw-bold mb-3">¡Compra Realizada!</h1>
-                <p class="lead mb-4">Tu pedido ha sido confirmado exitosamente.</p>
-                
-                <div class="alert alert-pastel mb-4">
-                    <i class="bi bi-envelope"></i> 
-                    Te hemos enviado un correo con los detalles de tu compra.
-                </div>
-                
-                <!-- Detalles del pedido -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Detalles del Pedido</h5>
-                    </div>
-                    <div class="card-body text-start">
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Número de pedido:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.id }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Fecha:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.created_at|date:"d/m/Y H:i" }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Total:</strong>
-                            </div>
-                            <div class="col-6 text-success fw-bold fs-5">
-                                ${{ order.total }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Método de pago:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.get_payment_method_display }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <strong>Estado:</strong>
-                            </div>
-                            <div class="col-6">
-                                <span class="badge bg-success">Pagado</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Productos comprados -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Productos</h5>
-                    </div>
-                    <div class="card-body">
-                        {% for item in order.items.all %}
-                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                            <div>
-                                <strong>{{ item.product_name }}</strong>
-                                <br>
-                                <small class="text-muted">Cantidad: {{ item.quantity }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="fw-bold">${{ item.subtotal }}</span>
-                                <br>
-                                <small class="text-muted">${{ item.product_price }} c/u</small>
-                            </div>
-                        </div>
-                        {% empty %}
-                            {% for item in order.get_items %}
-                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                                <div>
-                                    <strong>{{ item.product.name }}</strong>
-                                    <br>
-                                    <small class="text-muted">Cantidad: {{ item.quantity }}</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="fw-bold">${{ item.subtotal }}</span>
-                                    <br>
-                                    <small class="text-muted">${{ item.product.price }} c/u</small>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Botones de acción -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <a href="{% url 'home' %}" class="btn btn-pastel btn-lg">
-                        <i class="bi bi-house"></i> Seguir Comprando
-                    </a>
-                    <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary btn-lg">
-                        <i class="bi bi-receipt"></i> Ver Mis Pedidos
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-
-
-
-
-
-
-
-product_detail.html
-
-
-
-
-{% extends 'pasteleria/base.html' %}
-{% load static %}
-
-{% block title %}Pedido Confirmado - Dulce Delirio{% endblock %}
-
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-lg border-0 text-center">
-            <div class="card-body p-5">
-                <!-- Icono de éxito -->
-                <div class="mb-4">
-                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
-                </div>
-                
-                <h1 class="display-5 fw-bold mb-3">¡Compra Realizada!</h1>
-                <p class="lead mb-4">Tu pedido ha sido confirmado exitosamente.</p>
-                
-                <div class="alert alert-pastel mb-4">
-                    <i class="bi bi-envelope"></i> 
-                    Te hemos enviado un correo con los detalles de tu compra.
-                </div>
-                
-                <!-- Detalles del pedido -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Detalles del Pedido</h5>
-                    </div>
-                    <div class="card-body text-start">
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Número de pedido:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.id }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Fecha:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.created_at|date:"d/m/Y H:i" }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Total:</strong>
-                            </div>
-                            <div class="col-6 text-success fw-bold fs-5">
-                                ${{ order.total }}
-                            </div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <strong>Método de pago:</strong>
-                            </div>
-                            <div class="col-6">
-                                {{ order.get_payment_method_display }}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <strong>Estado:</strong>
-                            </div>
-                            <div class="col-6">
-                                <span class="badge bg-success">Pagado</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Productos comprados -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Productos</h5>
-                    </div>
-                    <div class="card-body">
-                        {% for item in order.items.all %}
-                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                            <div>
-                                <strong>{{ item.product_name }}</strong>
-                                <br>
-                                <small class="text-muted">Cantidad: {{ item.quantity }}</small>
-                            </div>
-                            <div class="text-end">
-                                <span class="fw-bold">${{ item.subtotal }}</span>
-                                <br>
-                                <small class="text-muted">${{ item.product_price }} c/u</small>
-                            </div>
-                        </div>
-                        {% empty %}
-                            {% for item in order.get_items %}
-                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                                <div>
-                                    <strong>{{ item.product.name }}</strong>
-                                    <br>
-                                    <small class="text-muted">Cantidad: {{ item.quantity }}</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="fw-bold">${{ item.subtotal }}</span>
-                                    <br>
-                                    <small class="text-muted">${{ item.product.price }} c/u</small>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Botones de acción -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <a href="{% url 'home' %}" class="btn btn-pastel btn-lg">
-                        <i class="bi bi-house"></i> Seguir Comprando
-                    </a>
-                    <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary btn-lg">
-                        <i class="bi bi-receipt"></i> Ver Mis Pedidos
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-
-
-
-
-
-product_form.html
-
-
-
-
-
-{% extends 'pasteleria/base.html' %}
-{% block title %}{{ action }} Producto{% endblock %}
-
-{% block content %}
-<h2 class="mb-4">{{ action }} Producto de Pastelería</h2>
-<form method="POST" enctype="multipart/form-data" class="card shadow-sm p-4">
-    {% csrf_token %}
-    
-    <!-- Renderizado manual para un mejor control del diseño -->
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="{{ form.name.id_for_label }}" class="form-label">Nombre del Pastel</label>
-            {{ form.name }}
-        </div>
-        <div class="col-md-3 mb-3">
-            <label for="{{ form.price.id_for_label }}" class="form-label">Precio (MXN)</label>
-            {{ form.price }}
-        </div>
-        <div class="col-md-3 mb-3">
-            <label for="{{ form.stock.id_for_label }}" class="form-label">Existencia</label>
-            {{ form.stock }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="{{ form.flavor.id_for_label }}" class="form-label">Sabor</label>
-            {{ form.flavor }}
-        </div>
-        <div class="col-md-6 mb-3">
-            <label for="{{ form.size.id_for_label }}" class="form-label">Tamaño</label>
-            {{ form.size }}
-        </div>
-    </div>
-    <div class="mb-3">
-        <label for="{{ form.description.id_for_label }}" class="form-label">Descripción</label>
-        {{ form.description }}
-    </div>
-    <div class="mb-3">
-        <label for="{{ form.image.id_for_label }}" class="form-label">Imagen del Producto</label>
-        {{ form.image }}
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Categorías</label>
-        <div class="d-flex flex-wrap gap-2">
-            {{ form.categories }}
-        </div>
-    </div>
-    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary me-md-2">Cancelar</a>
-        <button type="submit" class="btn btn-pastel">Guardar Producto</button>
-    </div>
-</form>
-{% endblock %}
-
-
-
-
-
-register.html
-
-
-
-<!-- register.html -->
-{% extends 'pasteleria/base.html' %}
-{% block title %}Registro{% endblock %}
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="mb-4">Crear Cuenta</h2>
-        <form method="POST" class="card shadow-sm p-4">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-pastel w-100">Registrarse</button>
-        </form>
-        <p class="mt-3 text-center">¿Ya tienes cuenta? <a href="{% url 'login' %}">Ingresa aquí</a></p>
-    </div>
-</div>
-{% endblock %}
-
-
-
-
-ejecutar codigo:
-
-python manage.py runserver
 
+En pocas palabras 
+URLs = La dirección que escribe el usuario
+Views = La lógica que procesa la petición
+Templates = El HTML que muestra la información
+El flujo es siempre el mismo: URL → View → Template → Usuario. La vista recibe la petición de la URL, consulta la base de datos si es necesario, y envía los datos al template para que se muestren en pantalla.
 
+Componente
+Función
+Código clave
+urls.py
+Recibe la URL y decide qué vista ejecutar
+path('ruta/', views.funcion, name='nombre')
+views.py
+Procesa datos, consulta BD, prepara respuesta
+def funcion(request): + return render()
+Templates
+Muestra los datos visualmente
+{{ variable }} y {% for %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CONCLUSIONES FINALES
+En conclusión, el desarrollo de este proyecto final representó una experiencia muy importante para comprender de manera práctica cómo funciona una aplicación web completa utilizando el framework Django. A través de este sistema se logró desarrollar una plataforma funcional para una pastelería en línea llamada “Dulce Delirio”, integrando herramientas de programación, bases de datos, diseño web y gestión de usuarios dentro de un mismo proyecto.
+Durante la elaboración del sistema se aplicaron diferentes conocimientos aprendidos a lo largo del semestre, especialmente sobre el desarrollo backend y la administración de bases de datos relacionales. El proyecto permitió entender cómo Django organiza una aplicación mediante modelos, vistas, urls y templates, logrando que todas las partes trabajen de manera conectada para ofrecer una experiencia funcional al usuario.
+Uno de los aspectos más importantes del proyecto fue el diseño de la base de datos. Se crearon distintos modelos para representar las entidades principales de la pastelería, como usuarios, productos, categorías, ingredientes, reseñas, carritos, pedidos y pagos. Cada modelo fue diseñado con campos específicos para almacenar información importante dentro del sistema. Gracias a esto, la aplicación puede manejar correctamente datos relacionados con productos de repostería, clientes y procesos de compra.
+Además, se implementaron distintos tipos de relaciones entre tablas, como relaciones uno a muchos, muchos a muchos y uno a uno. Estas relaciones permitieron conectar correctamente toda la información del sistema. Por ejemplo, un vendedor puede tener muchos productos, un producto puede pertenecer a varias categorías y un pedido puede tener asociado un único pago. Estas relaciones hacen que la base de datos sea más organizada, eficiente y fácil de administrar.
+El proyecto también permitió comprender la importancia de las views dentro de Django. Las views son las encargadas de procesar las solicitudes de los usuarios, obtener información de la base de datos y enviarla a los templates para mostrarla en pantalla. Gracias a esto, se logró implementar funciones importantes como el registro de usuarios, inicio de sesión, creación de productos, carrito de compras, sistema de pedidos y simulación de pagos.
+Por otra parte, las urls tuvieron un papel fundamental dentro de la aplicación, ya que son las encargadas de conectar las páginas del sistema con las funciones correspondientes. Cada vez que un usuario entra a una página, Django utiliza las urls para dirigir la solicitud hacia la view adecuada. Esto permitió organizar correctamente la navegación de la plataforma y mejorar la estructura general del proyecto.
+En cuanto a los templates, estos permitieron crear la interfaz visual de la pastelería utilizando HTML y el sistema de plantillas de Django. Gracias a esto, la aplicación puede mostrar información dinámica al usuario, como listas de productos, detalles de pedidos, reseñas y datos del carrito de compras. Los templates ayudan a que el sistema sea más visual, ordenado y fácil de utilizar para los clientes.
+Otro aspecto importante fue la implementación de Django Admin, herramienta que facilitó enormemente la administración de datos dentro del sistema. Desde el panel de administración fue posible agregar, editar y eliminar información relacionada con productos, categorías, usuarios y pedidos sin necesidad de modificar directamente la base de datos. Esto demuestra cómo Django ofrece herramientas que agilizan el desarrollo y la gestión de aplicaciones web.
+La temática de la pastelería “Dulce Delirio” permitió crear un proyecto más creativo y cercano a una situación real. El sistema simula el funcionamiento de una tienda en línea donde los clientes pueden explorar productos, agregar artículos al carrito, realizar pedidos y dejar reseñas sobre los productos comprados. Esto ayudó a comprender cómo funcionan actualmente muchas plataformas de comercio electrónico utilizadas por negocios reales.
+De igual manera, el proyecto ayudó a desarrollar habilidades relacionadas con la lógica de programación, la organización de código y la resolución de problemas. Durante el desarrollo se presentaron distintos desafíos, como la conexión entre modelos, el manejo de formularios, el control de permisos de usuarios y la validación de información, los cuales fueron solucionados mediante herramientas y funciones proporcionadas por Django.
+Finalmente, este proyecto permitió reforzar los conocimientos adquiridos durante el semestre y demostrar que es posible desarrollar aplicaciones web completas utilizando buenas prácticas de programación y estructuras organizadas. La experiencia obtenida servirá como base para futuros proyectos más avanzados relacionados con desarrollo web, bases de datos y sistemas de comercio electrónico.
+En general, el sistema desarrollado cumple correctamente con los objetivos planteados, ofreciendo una plataforma funcional, organizada y dinámica para la administración de una pastelería en línea, integrando tanto la parte visual como la lógica interna de la aplicación de manera eficiente y profesional.
 
