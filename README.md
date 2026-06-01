@@ -14,6 +14,7 @@
 * [CONCLUSIONES FINALES](#conclusiones-finales) ................................................ 23
 
 
+
 ==========INTRODUCCIÓN==========
 
 El objetivo de este documento fue ir recalcando puntos importantes sobre este último parcial en la que teníamos que realizar un proyecto con, lo que ya habíamos visto anteriormente, lo cual decidimos hacer sobre una pastelería, que básicamente podría parecerse a una tienda online en la que utilizamos varios modelos para que pudiera guardar la información acerca de los clientes, precios, actividades del admin entre otras cosas.
@@ -47,10 +48,10 @@ Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, base
 | `Bootstrap` | Framework de diseño utilizado para crear interfaces más modernas, organizadas y adaptables. |
 | `SQLite` | Base de datos utilizada para almacenar información de usuarios, productos, pedidos, reseñas y pagos. |
 
-![alt text](image-2.png)
 
 
 ==========DESARROLLO==========
+
 
 --------Modelos-------
 
@@ -638,7 +639,7 @@ class ProductAdmin(admin.ModelAdmin):
               'categories', 'ingredients', 'owner')
 
 
-# ==================== ADMIN PARA CARRITO ==================== #
+# ==================== Admin para carrito ==================== #
 
 class CartItemInline(admin.TabularInline):
     model = CartItem
