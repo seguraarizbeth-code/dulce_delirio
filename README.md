@@ -53,20 +53,24 @@ Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, base
 ==========DESARROLLO==========
 
 --------Modelos-------
+
 Se utilizaron diferentes modelos dentro de la base de datos, los cuales permiten guardar y organizar la información de manera más sencilla. Cada modelo tiene su función en el sistema, como usuarios, productos, categorías, ingredientes, reseñas, etc. Todos ayudan a que la información se conecte y que así el programa funcione correctamente.
 
 
 --------Modelo “User”--------
+
 class User(AbstractUser):
 Se utiliza para guardar la información de los usuarios que se registren en la página. Se agregó una opción para saber si el usuario es cliente o admin, también incluye datos básicos, como el nombre de usuario, contraseña y correo electrónico.
 
 
 -------Modelo “Category”-------
+
 class Category(models.Model):
 Se utiliza para guardar las categorías de los productos de la pastelería, cada una tiene un nombre y descripción para organizar los postres dentro de la página. De esta manera se encuentran de manera más eficaz y sencilla dependiendo de lo que el cliente esté buscando. 
 
 
 --------Modelo “Ingredient”-------
+
 class Ingredient(models.Model):
 Este modelo es para almacenar los ingredientes que se utilizan en la papelería, que nos deja registrar y organizar la información de cada uno, para saber qué contiene cada uno.
 este campo indica si puede tener algún tipo de halogeno para que los clientes puedan saber lo que contiene cada pastel y saber si son alérgicos a algún ingrediente.
@@ -79,6 +83,7 @@ allergen_type = models.CharField(
 
 
 --------Modelo “Product”--------
+
 class Product(models.Model):
 Este es principal en el proyecto, guarda toda la información relacionada con los productos de la pastelería, como:
 
@@ -106,6 +111,7 @@ flavor = models.CharField(max_length=100, verbose_name="Sabor")
 
 
 -------Modelo “Review”-------
+
 class Review(models.Model):
 Se utiliza para guardar reseñas que hacen los clientes sobre los productos, cada reseña incluye:
 
@@ -136,11 +142,13 @@ created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de rese
 
 
 -------Modelos “Cart”--------
+
 Permite guardar los productos que el cliente quiere comprar antes de terminar el pedido, además de calcular el total de tu compra según la cantidad de productos que hayas agregado.
 class Cart(models.Model):
 
 
 -------Modelo “Cartltem”--------
+
 class CartItem(models.Model):
 Se utiliza para relacionar los productos del carrito de compras, también calcula el total dependiendo la cantidad de productos y su precio, por eso es que el carrito puede tener varios productos al mismo tiempo en una sola compra. El modelo guarda:
 
@@ -156,10 +164,12 @@ La cantidad seleccionada
 
 
 ==========Views==========
+
 Fueron utilizados para la lógica y funcionamiento de la página, se encargan de conectar la base de datos con las plantillas para mostrar la información correcta al usuario. Con estas se pueden controlar funciones como el registro de usuario e inicio de sesión, administrar productos, carrito de compras, reseñas, etc.
 
 
 --------Vista “Home”--------
+
 def home(request):
 Funciona como página principal de la pastelería, se muestran los productos disponibles junto con distintos filtro y un buscador, también se agregaron páginas para mostrar los productos de forma más organizada, mostrando cierta cantidad por página. Los usuarios pueden buscar:
 
@@ -192,11 +202,13 @@ if ingredient_filter:
 
 
 -------Vista “Register”--------
+
 Se utiliza para registrar nuevos usuarios dentro de la página, si hace los pasos correctos el usuario se guarda automáticamente en la base de datos y después puede iniciar sesión dentro de la página
 def register(request)
 
 
 --------Vista ”Login_view”-------
+
 Permite que los usuarios inicien sesión utilizando el nombre de usuario y contraseña. Si los datos son correctos el sistema va a mandarlo al sitio correspondiente dependiendo si es cliente o administrador
 def login_view(request)
 Vista “Logout_view”
@@ -205,6 +217,7 @@ def logout_view(request)
 
 
 --------Vista “Dashboard”--------
+
 def dashboard(request):
 Funciona como panel de administración para los vendedores/administradores, además de verificar que solo los vendedores/administradores tengan acceso a esta parte del sistema, tales como:
 
@@ -225,6 +238,7 @@ avg_rating = Review.objects.filter(product__owner=request.user).aggregate(
 
 
 --------Vista “Product_create”--------
+
 def product_create(request):
 Permite agregar nuevos productos a la base de datos, cuando se guarda correctamente el sistema manda un mensaje de confirmación. La información que puede registrarse es:
 
@@ -244,16 +258,19 @@ Existencia
 
 
 --------Vista “Product_update”--------
+
 Se utiliza para modificar productos que ya están registrados, se verifica que el producto sea del vendedor que intenta editarlo para evitar cambios no autorizados.
 def product_update(request, pk)
 
 
 --------Vista “Product_delete”--------
+
 Permite eliminar productos ya registrados en el sistema, antes de eliminar algún producto se manda solicitud de confirmación para evitar eliminaciones accidentales.
 def product_delete(request, pk)
 
 
 --------Vista “Product_detail”--------
+
 def product_detail(request, pk):
 Muestra toda la información detallada del producto, también permite que los usuarios registrados puedan dejar algún comentario o reseña sobre el producto. Cosas como:
 
@@ -267,30 +284,36 @@ Productos relacionados
 
 
 --------Vista “Cart_detail”--------
+
 Muestra todos los productos agregados al carrito del usuario, se ven todos los productos seleccionados, cantidades y el total de la compra
 def cart_detail(request):
 
 
 --------Vista “Add_to_cart”--------
+
 Se utiliza para agregar productos al carrito de compras, también verifica que el producto tenga existencia disponible antes de agregarlo.
 def add_to_cart(request, product_id)
 
 
 --------Vista “Remove_from_cart”--------
+
 Permite eliminar productos del carrito de compras de usuarios 
 def remove_from_cart(request, item_id)
 
 
 --------Vista” Update_cart_item”--------
+
 Se utiliza para modificar la cantidad de productos dentro del carrito. El sistema también verifica que no se agreguen más productos de los que ya existen.
 def update_cart_item(request, item_id)
 
  
 --------Vista “Checkout”--------
+
 Se utiliza para ver la forma de realizar el pago de cada cliente,si va a hacer en efectivo,transferencia o pago con tarjeta de crédito,dentro de esa función te pide el nombre,el número de tarjeta y el número en el que vence la tarjeta para que no haya errores.
 
 
 --------Vista "metodo de pago"--------
+
 art, created = Cart.objects.get_or_create(user=request.user)
 verificación si el carrito no está vacío
  if not cart.cartitem_set.exists():
@@ -313,6 +336,7 @@ def order_confirmation(request, order_id):
 
 
 --------vista "confirmación de pedido"--------
+
 def order_confirmation(request, order_id):
 función para saber que compraste en la pastelería,cuanto fue por cada uno y el total.
 
@@ -320,73 +344,88 @@ función para saber que compraste en la pastelería,cuanto fue por cada uno y el
 
 
 ===========Urls==========
+
 Son los encargados de que cada enlace dentro de la página lleve a cabo la función correcta, y que muestra la información adecuada al usuario dependiendo de la acción que haga. Están organizados de manera que sustentan las funciones principales del sistema.
 
 
 --------Página principal--------
+
 Dirige a la persona a la página principal, del proyecto, donde muestra los productos que están disponibles con los filtros y buscador.
     path('', views.home, name='home')
 
 
 --------Registro de usuarios--------
+
 Permite que nuevos usuarios puedan crear una cuenta desde la plataforma 
     path('register/', views.register, name='register')
 
 
 --------Inicio de sesión--------
+
 Se utiliza para que los usuarios puedan iniciar sesión con su cuenta registrada
     path('login/', views.login_view, name='login')
 
 
 --------Cierre de sesión--------
+
 Permite cerrar la sesión del usuario actual y regresa a la página principal
     path('logout/', views.logout_view, name='logout')
 
 
 --------Dashboard--------
+
 Dirige al panel de administración a los vendedores, donde se pueden manipular los productos y ver estadísticas generales de estos 
     path('dashboard/', views.dashboard, name='dashboard'),
 
 
 --------Crear productos--------
+
 Permite registrar nuevos productos dentro de la pastelería 
     path('products/create/', views.product_create, name='product_create')
 
 --------Editar productos--------
+
 Permite modificar la información de un producto ya registrado en el sistema
     path('products/<uuid:pk>/edit/', views.product_update, name='product_update')
 
 
 --------Eliminar productos--------
+
 Se utiliza para eliminar productos del sistema 
     path('products/<uuid:pk>/delete/', views.product_delete, name='product_delete')
 
 
 --------Detalle de productos-------- 
+
 Muestra toda la información detallada de un producto, incluyendo reseñas, ingredientes y productos relacionados
     path('products/<uuid:pk>/', views.product_detail, name='product_detail')
 
 
 --------Carrito de compras--------
+
 Permite visualizar el contenido del carrito del usuario 
     path('cart/', views.cart_detail, name='cart_detail')
 
 
 --------Agregar al carrito--------
+
 Agrega un producto seleccionado al carrito de compras 
     path('cart/add/<uuid:product_id>/', views.add_to_cart, name='add_to_cart')
 
 
 --------Eliminar del carrito--------
+
 Permite eliminar un producto específico del carrito 
     path('cart/remove/<uuid:item_id>/', views.remove_from_cart, name='remove_from_cart')
 
 
 --------Actualizar carrito--------
+
 Se utiliza para cambiar la cantidad de un producto dentro del carrito de compras 
     path('cart/update/<uuid:item_id>/', views.update_cart_item, name='update_cart_item')
 
 --------Forma de pago--------
+
 se utiliza para saber de que forma va a pagar el cliente,en efectivo,con tarjeta ontransferencia.
  path('checkout/', views.checkout, name='checkout'),
 path('order/<uuid:order_id>/', views.order_confirmation, name='order_confirmation')
@@ -395,10 +434,12 @@ path('order/<uuid:order_id>/', views.order_confirmation, name='order_confirmatio
 
 
 **********TIPO DE RELACIONES**********
+
 Dentro del proyecto se utilizaron distintos tipos de relaciones entre los modelos para lograr que la información del sistema se conecte correctamente, estas relaciones ayudan a organizar los datos de manera más eficaz y estructurada. Permiten que funciones como productos, reseñas, ingredientes y carrito de compras puedan actuar entre sí, dentro del programa.
 
 
 --------USER-PRODUCTO--------
+
 RELACIÓN UNO A MUCHOS
 
 owner = models.ForeignKey(
@@ -531,6 +572,7 @@ En general, el diseño de la base de datos es una de las partes más importantes
 
 
 ==========ADMINISTRACIÓN DEL SISTEMA==========
+
 Desde este apartado se pueden manejar los diferentes modelos del proyecto, como usuarios, productos, categorías, ingredientes, reseñas y carrito de compras. 
 A continuación se muestra el código completo del archivo admin.py del proyecto "Dulce Delirio", que es el responsable de que los administradores puedan gestionar toda la información de manera visual y lógica: 
 
@@ -540,6 +582,7 @@ from .models import User, Category, Product, Cart, CartItem, Ingredient, Review,
 
 
 # ==================== ADMIN PARA USUARIOS ==================== #
+
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'is_seller')  # Columnas visibles
@@ -548,6 +591,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 # ==================== ADMIN PARA CATEGORÍAS ==================== #
+
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
@@ -555,6 +599,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 # ==================== ADMIN PARA INGREDIENTES ==================== #
+
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_allergen', 'allergen_type')
@@ -563,6 +608,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 
 # ==================== ADMIN PARA PRODUCTOS (CRUD COMPLETO) ==================== #
+
 class ReviewInline(admin.TabularInline):
     model = Review
     extra = 0
@@ -593,6 +639,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 # ==================== ADMIN PARA CARRITO ==================== #
+
 class CartItemInline(admin.TabularInline):
     model = CartItem
     extra = 1
@@ -605,6 +652,7 @@ class CartAdmin(admin.ModelAdmin):
 
 
 # ==================== ADMIN PARA RESEÑAS ==================== #
+
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
@@ -613,6 +661,7 @@ class ReviewAdmin(admin.ModelAdmin):
 
 
 # ==================== ADMIN PARA PEDIDOS ==================== #
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'total', 'payment_method', 'status', 'created_at')
