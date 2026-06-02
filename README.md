@@ -183,7 +183,7 @@ class Cart(models.Model):
 
 -------Modelo “Cartltem”--------
 
-class CartItem(models.Model):
+#class CartItem(models.Model):
 Se utiliza para relacionar los productos del carrito de compras, también calcula el total dependiendo la cantidad de productos y su precio, por eso es que el carrito puede tener varios productos al mismo tiempo en una sola compra. El modelo guarda:
 
 El carrito relacionado
