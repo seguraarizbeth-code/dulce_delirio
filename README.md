@@ -484,6 +484,9 @@ owner = models.ForeignKey(
 )
 
 
+
+
+
 --------USER - REVIEW--------
 
 RELACIÓN UNO A MUCHOS
@@ -495,6 +498,9 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name="Cliente"
     )
+
+
+
 
 
 
@@ -511,6 +517,9 @@ class Order(models.Model):
     )
 
 
+
+
+
 --------PRODUCT - REVIEW--------
 
 RELACIÓN UNO A MUCHOS
@@ -525,6 +534,9 @@ class Review(models.Model):
 
 
 
+
+
+
 --------CART - CARTLTEM--------
 
 RELACIÓN UNO A MUCHOS
@@ -535,6 +547,9 @@ class CartItem(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Carrito"
     )
+
+
+
 
 
 
@@ -555,6 +570,9 @@ Este tipo de relación se utiliza cuando un registro puede estar relacionado con
 En el proyecto se puede observar esta relación entre usuarios y reseñas, ya que un usuario puede realizar varias reseñas dentro de la página, pero cada reseña pertenece a un usuario. También se utiliza entre productos y reseñas, debido a que un producto puede tener varias opiniones hechas por distintos clientes.
 
 
+
+
+
 --------PRODUCT - CATEGORY--------
 
 RELACIÓN MUCHOS A MUCHOS
@@ -566,6 +584,9 @@ class Product(models.Model):
         related_name='products',
         verbose_name="Categorías"
     )
+
+
+
 
 --------PRODUCT - INGREDIENT--------
 
