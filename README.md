@@ -635,7 +635,7 @@ En general, el diseño de la base de datos es una de las partes más importantes
 Desde este apartado se pueden manejar los diferentes modelos del proyecto, como usuarios, productos, categorías, ingredientes, reseñas y carrito de compras. 
 A continuación se muestra el código completo del archivo admin.py del proyecto "Dulce Delirio", que es el responsable de que los administradores puedan gestionar toda la información de manera visual y lógica: 
 
-# pastelería/admin.py
+pastelería/admin.py
 from django.contrib import admin
 from .models import User, Category, Product, Cart, CartItem, Ingredient, Review, Order, Payment
 
