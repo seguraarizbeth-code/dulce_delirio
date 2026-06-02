@@ -1,3 +1,21 @@
+-Docente: JOSE CHRISTIAN ROMERO HERNANDEZ 
+-Proyecto: Pastelería         
+-Alumnas: Hernandez Reyes Acxa Rebeca
+-Gutierrez Dominguez Alizon
+-Modad Gonzales Scarlett Regina
+-Ochoa Iñiguez Jennifer Monserrath 
+-Segura Sanchez Arizbeth Eunice
+
+
+
+
+
+
+
+
+
+
+
 ==========ÍNDICE==========
 
 'INTRODUCCIÓN' ........................................................ 3
