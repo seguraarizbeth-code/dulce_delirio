@@ -39,6 +39,8 @@
 
 
 
+
+
 ==========INTRODUCCIÓN==========
 
 El objetivo de este documento fue ir recalcando puntos importantes sobre este último parcial en la que teníamos que realizar un proyecto con, lo que ya habíamos visto anteriormente, lo cual decidimos hacer sobre una pastelería, que básicamente podría parecerse a una tienda online en la que utilizamos varios modelos para que pudiera guardar la información acerca de los clientes, precios, actividades del admin entre otras cosas.
@@ -61,6 +63,7 @@ Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, base
 
 
 
+
 | Tecnología / Herramienta | Uso dentro del proyecto |
 | :--- | :--- |
 | `Python` | Lenguaje de programación principal utilizado para desarrollar toda la lógica del sistema y el funcionamiento del backend. |
@@ -74,12 +77,16 @@ Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, base
 
 
 
+
+
 ==========DESARROLLO==========
+
 
 
 --------Modelos-------
 
 Se utilizaron diferentes modelos dentro de la base de datos, los cuales permiten guardar y organizar la información de manera más sencilla. Cada modelo tiene su función en el sistema, como usuarios, productos, categorías, ingredientes, reseñas, etc. Todos ayudan a que la información se conecte y que así el programa funcione correctamente.
+
 
 
 --------Modelo “User”--------
@@ -88,10 +95,12 @@ class User(AbstractUser):
 Se utiliza para guardar la información de los usuarios que se registren en la página. Se agregó una opción para saber si el usuario es cliente o admin, también incluye datos básicos, como el nombre de usuario, contraseña y correo electrónico.
 
 
+
 -------Modelo “Category”-------
 
 class Category(models.Model):
 Se utiliza para guardar las categorías de los productos de la pastelería, cada una tiene un nombre y descripción para organizar los postres dentro de la página. De esta manera se encuentran de manera más eficaz y sencilla dependiendo de lo que el cliente esté buscando. 
+
 
 
 --------Modelo “Ingredient”-------
@@ -606,7 +615,7 @@ from django.contrib import admin
 from .models import User, Category, Product, Cart, CartItem, Ingredient, Review, Order, Payment
 
 
-# ====== Admin para usuarios ======= #
+====== Admin para usuarios ======= 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
