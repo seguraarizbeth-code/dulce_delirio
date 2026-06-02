@@ -586,6 +586,7 @@ Relación uno a uno La relación uno a uno se utiliza cuando un registro solamen
 
 
 
+
 ==========DISEÑO DE LA BASE DE DATOS==========
 
 La base de datos del proyecto fue diseñada utilizando un modelo relacional, permitiendo organizar toda la información de manera estructurada y conectada entre sí. Este tipo de diseño ayuda a que los datos se almacenen de forma más ordenada dentro del sistema, facilitando el manejo de la información y evitando que existan datos repetidos o desorganizados.
@@ -605,6 +606,9 @@ En general, el diseño de la base de datos es una de las partes más importantes
 
 
 
+
+
+
 ==========ADMINISTRACIÓN DEL SISTEMA==========
 
 Desde este apartado se pueden manejar los diferentes modelos del proyecto, como usuarios, productos, categorías, ingredientes, reseñas y carrito de compras. 
@@ -613,6 +617,8 @@ A continuación se muestra el código completo del archivo admin.py del proyecto
 # pastelería/admin.py
 from django.contrib import admin
 from .models import User, Category, Product, Cart, CartItem, Ingredient, Review, Order, Payment
+
+
 
 
 
@@ -625,12 +631,16 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('username', 'email')              # Barra de búsqueda
 
 
+
+
  ====== Admin para categoria ====== 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
+
+
 
 
 
@@ -642,6 +652,8 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_allergen', 'allergen_type')
     list_filter = ('is_allergen',)
     search_fields = ('name',)
+
+
 
 
 
@@ -677,6 +689,8 @@ class ProductAdmin(admin.ModelAdmin):
 
               
 
+
+
  ====== Admin para carrito ====== 
 
 class CartItemInline(admin.TabularInline):
@@ -691,6 +705,8 @@ class CartAdmin(admin.ModelAdmin):
 
 
 
+
+
  ====== Admin para reseñas ====== 
 
 @admin.register(Review)
@@ -698,6 +714,8 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'user', 'rating', 'created_at')
     list_filter = ('rating', 'created_at')
     search_fields = ('product__name', 'user__username', 'comment')
+
+
 
 
 
@@ -712,6 +730,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 
+
+
+
 ==========ENTRADA DE DATOS==========
 
 def product_create(request):
@@ -723,6 +744,9 @@ def product_create(request):
 
 La entrada de datos se realiza desde el panel de administración de Django, donde el administrador puede agregar nueva información al sistema. Por ejemplo, se pueden registrar nuevos productos, crear categorías, agregar ingredientes o incluso gestionar usuarios. Estos datos se almacenan automáticamente en la base de datos y quedan disponibles dentro de la aplicación.
 
+
+
+
 ==========ELIMINACIÓN DE DATOS==========
 
 def product_delete(request, pk):
@@ -730,6 +754,10 @@ def product_delete(request, pk):
     product.delete()
 
 La eliminación de datos también se realiza desde el admin. El administrador puede eliminar registros que ya no sean necesarios o que ya no se utilicen en la página, como productos descontinuados, reseñas incorrectas o información que ya no sea relevante. Esto ayuda a mantener la base de datos organizada y actualizada.
+
+
+
+
 
 
 
@@ -746,9 +774,15 @@ La actualización de datos permite modificar información ya existente dentro de
               'size', 'flavor', 'preparation_time', 'is_available',
               'categories', 'ingredients', 'owner')
 
+
+
+
 ==========FUNCIONAMIENTO DE LOS VIEWS Y SUS INTERACCIONES==========
 
 Los views son una parte fundamental del proyecto, ya que se encargan de la lógica de la aplicación. Su función principal es recibir las peticiones del usuario, obtener información de la base de datos mediante los modelos y enviar esos datos a las plantillas para ser mostrados en pantalla.
+
+
+
 
 ==========VIEWS Y URLS==========
 
@@ -756,6 +790,9 @@ path('products/create/', views.product_create, name='product_create')
 path('products/<uuid:pk>/edit/', views.product_update, name='product_update')
 path('products/<uuid:pk>/delete/', views.product_delete, name='product_delete')
 Los views trabajan directamente con las URLs, ya que cada URL está conectada a una vista específica. Esto permite que cuando el usuario ingresa a una dirección dentro del sitio web, se ejecute una función concreta que procesa la información correspondiente y determina qué contenido se debe mostrar.
+
+
+
 
 ==========VIEWS Y TEMPLATES==========
 
@@ -767,6 +804,9 @@ def product_detail(request, pk):
         'reviews': reviews,
     })
 Los views también interactúan con los templates, ya que son los encargados de enviar la información que se mostrará en la interfaz del usuario. Los templates reciben estos datos y los presentan de forma visual, permitiendo mostrar productos, formularios, detalles de productos, carrito de compras y otras secciones de manera dinámica.
+
+
+
 
 ==========INTEGRACIÓN DEL SISTEMA==========
 
@@ -787,6 +827,8 @@ El flujo es siempre el mismo: URL → View → Template → Usuario. La vista re
 | `urls.py` | Recibe la URL y decide qué vista ejecutar | `path('ruta/', views.funcion, name='nombre')` |
 | `views.py` | Procesa datos, consulta BD, prepara respuesta | `def funcion(request): + return render()` |
 | `Templates` | Muestra los datos visualmente | `{{ variable }}` y `{% for %}` |
+
+
 
 
 
