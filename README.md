@@ -75,6 +75,8 @@ Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, base
 | `Bootstrap` | Framework de diseño utilizado para crear interfaces más modernas, organizadas y adaptables. |
 | `SQLite` | Base de datos utilizada para almacenar información de usuarios, productos, pedidos, reseñas y pagos. |
 
+![Logo de mi proyecto](image-2.png)
+
 
 
 
