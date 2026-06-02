@@ -615,6 +615,7 @@ from django.contrib import admin
 from .models import User, Category, Product, Cart, CartItem, Ingredient, Review, Order, Payment
 
 
+
 ====== Admin para usuarios ======= 
 
 @admin.register(User)
@@ -624,7 +625,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('username', 'email')              # Barra de búsqueda
 
 
-# ====== Admin para categoria ====== #
+ ====== Admin para categoria ====== 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -632,7 +633,9 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-# ====== Admin para ingredientes ====== #
+
+
+ ====== Admin para ingredientes ====== 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
@@ -641,7 +644,8 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-# ====== Admin para productos ====== #
+
+ ====== Admin para productos ====== 
 
 class ReviewInline(admin.TabularInline):
     model = Review
@@ -671,8 +675,9 @@ class ProductAdmin(admin.ModelAdmin):
               'size', 'flavor', 'preparation_time', 'is_available',
               'categories', 'ingredients', 'owner')
 
+              
 
-# ====== Admin para carrito ====== #
+ ====== Admin para carrito ====== 
 
 class CartItemInline(admin.TabularInline):
     model = CartItem
@@ -685,7 +690,8 @@ class CartAdmin(admin.ModelAdmin):
     inlines = [CartItemInline]
 
 
-# ====== Admin para reseñas ====== #
+
+ ====== Admin para reseñas ====== 
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
@@ -694,7 +700,8 @@ class ReviewAdmin(admin.ModelAdmin):
     search_fields = ('product__name', 'user__username', 'comment')
 
 
-# ====== Admin para pedidos ====== #
+
+ ====== Admin para pedidos ====== 
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
