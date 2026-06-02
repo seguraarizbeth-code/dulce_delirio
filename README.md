@@ -75,8 +75,7 @@ Este proyecto ayudó a reforzar nuestros conocimientos sobre programación, base
 | `Bootstrap` | Framework de diseño utilizado para crear interfaces más modernas, organizadas y adaptables. |
 | `SQLite` | Base de datos utilizada para almacenar información de usuarios, productos, pedidos, reseñas y pagos. |
 
-![Logo de mi proyecto](image-2.png)
-
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/e62d5463-a071-4fac-ac06-4c80218de0ff" />
 
 
 
