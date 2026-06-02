@@ -4,7 +4,11 @@
 
 
 'DESARROLLO' .......................................................... 5
+
+
 'TIPO DE RELACIONES' .................................................. 13
+
+
 * [DISEÑO DE LA BASE DE DATOS](#diseño-de-la-base-de-datos) .......................................... 16
 * [ADMINISTRACIÓN DEL SISTEMA](#administración-del-sistema) .......................................... 17
 * [ELIMINACIÓN DE DATOS](#eliminación-de-datos) ................................................ 19
